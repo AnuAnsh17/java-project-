@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Campus Connect</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-light">
+
+    <!-- Mobile Top Nav -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark d-lg-none">
+        <div class="container-fluid">
+            <span class="navbar-brand fw-bold">CC Admin</span>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminSidebar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav id="adminSidebar" class="col-md-3 col-lg-2 d-md-block bg-white sidebar collapse border-end">
+                <div class="position-sticky pt-4 px-3 h-100">
+                    <div class="d-none d-lg-block mb-4 text-center">
+                        <h5 class="fw-bold text-dark"><i class="bi bi-shield-lock-fill me-2"></i> Admin Panel</h5>
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item mb-2">
+                            <a class="nav-link active" href="#" onclick="showSection('adminDashboard', this)">
+                                <i class="bi bi-grid-1x2 me-2"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a class="nav-link text-dark" href="#" onclick="showSection('conductElection', this)">
+                                <i class="bi bi-plus-square me-2"></i> Conduct Election
+                            </a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a class="nav-link text-dark" href="#" onclick="showSection('electionControls', this)">
+                                <i class="bi bi-toggles2 me-2"></i> Election Controls
+                            </a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a class="nav-link text-dark" href="#" onclick="showSection('electionResults', this)">
+                                <i class="bi bi-bar-chart-fill me-2"></i> Election Results
+                            </a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a class="nav-link text-dark" href="#" onclick="showSection('adminClubs', this)">
+                                <i class="bi bi-plus-circle me-2"></i> Create Club
+                            </a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a class="nav-link text-dark" href="#" onclick="showSection('viewClubs', this)">
+                                <i class="bi bi-list-task me-2"></i> View Clubs
+                            </a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a class="nav-link text-dark" href="#" onclick="showSection('adminComplaints', this)">
+                                <i class="bi bi-exclamation-octagon me-2"></i> Complaints
+                            </a>
+                        </li>
+                        <hr>
+                        <li class="nav-item">
+                            <a class="nav-link text-danger" href="index.html">
+                                <i class="bi bi-box-arrow-left me-2"></i> Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                <header class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+                    <h1 class="h4 fw-bold mb-0">Campus Administrator</h1>
+                    <span class="badge bg-dark">System Admin</span>
+                </header>
+
+                <!-- Section: Dashboard -->
+                <section id="section-adminDashboard" class="content-section">
+                    <div class="row g-4">
+                        <div class="col-md-3">
+                            <div class="card border-0 shadow-sm p-3">
+                                <div class="text-muted small">Election Status</div>
+                                <h4 id="admin-stat-election">LIVE</h4>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card border-0 shadow-sm p-3">
+                                <div class="text-muted small">Total Candidates</div>
+                                <h4 id="admin-stat-candidates">0</h4>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card border-0 shadow-sm p-3">
+                                <div class="text-muted small">Total Clubs</div>
+                                <h4 id="admin-stat-clubs">0</h4>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card border-0 shadow-sm p-3">
+                                <div class="text-muted small">Total Complaints</div>
+                                <h4 id="admin-stat-complaints">0</h4>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Conduct Election -->
+                <section id="section-conductElection" class="content-section d-none">
+                    <div class="card border-0 shadow-sm p-4 mx-auto" style="max-width: 600px;">
+                        <h5 class="fw-bold mb-4">Create New Election</h5>
+                        <form id="createElectionForm">
+                            <div class="mb-3">
+                                <label class="form-label">Election Name</label>
+                                <input type="text" id="elName" class="form-control" placeholder="e.g. Student Council 2024" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Number of Candidates</label>
+                                <div class="input-group">
+                                    <input type="number" id="elCount" class="form-control" min="2" max="10" value="2">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="generateCandidateInputs()">Generate Fields</button>
+                                </div>
+                            </div>
+                            <div id="dynamic-candidates" class="mb-3">
+                                <!-- Dynamic inputs here -->
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Create Election</button>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- Section: Election Controls -->
+                <section id="section-electionControls" class="content-section d-none">
+                    <div class="card border-0 shadow-sm p-4 text-center">
+                        <h5 class="fw-bold mb-4">Manage Active Election</h5>
+                        <div id="active-election-info" class="mb-4">
+                            <p>Current Status: <span class="badge bg-secondary" id="control-status-badge">NOT STARTED</span></p>
+                        </div>
+                        <div class="d-flex justify-content-center gap-3">
+                            <button class="btn btn-success btn-lg px-4" id="btnStartElection">Start Election</button>
+                            <button class="btn btn-danger btn-lg px-4" id="btnEndElection">End Election</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Results -->
+                <section id="section-electionResults" class="content-section d-none">
+                    <div class="card border-0 shadow-sm p-4">
+                        <h5 class="fw-bold mb-4">Election Results</h5>
+                        <div id="results-content">
+                            <!-- Injected Results -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Create Club -->
+                <section id="section-adminClubs" class="content-section d-none">
+                    <div class="card border-0 shadow-sm p-4 mx-auto" style="max-width: 600px;">
+                        <h5 class="fw-bold mb-4">Register New College Club</h5>
+                        <form id="createClubForm">
+                            <div class="mb-3">
+                                <label class="form-label">Club Name</label>
+                                <input type="text" id="clubName" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Description</label>
+                                <textarea id="clubDesc" class="form-control" rows="3" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Icon (Emoji or CSS Class)</label>
+                                <input type="text" id="clubIcon" class="form-control" value="bi-gear">
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Create Club</button>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- Section: View Clubs -->
+                <section id="section-viewClubs" class="content-section d-none">
+                    <div class="card border-0 shadow-sm">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Club Name</th>
+                                        <th>Members</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-clubs-table">
+                                    <!-- Injected -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Complaints -->
+                <section id="section-adminComplaints" class="content-section d-none">
+                    <div class="card border-0 shadow-sm">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Student</th>
+                                        <th>Club</th>
+                                        <th>Complaint</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-complaints-table">
+                                    <!-- Injected -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
