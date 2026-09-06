@@ -148,3 +148,39 @@ Future iterations of Campus Connect may explore:
 - 📁 **Cloud Asset Storage**: Integration with cloud storage for assignment resource uploads.
 - 📈 **Campus Analytics**: Insights into student engagement, attendance trends, and event participation.
 - 🔌 **ERP Integration**: Connectors to integrate with existing institutional ERP systems.
+
+---
+
+## 💻 Running the Application & Presentation Demo
+
+### 1. 🎓 Standalone Presentation Demo (`demo/`)
+A self-contained, presentation-ready build designed for demonstration and localhost reviews without backend dependencies or login barriers.
+
+```bash
+# Navigate to the demo directory
+cd demo
+
+# Install dependencies
+npm install
+
+# Start the interactive presentation server
+npm run dev
+```
+
+Open `http://localhost:3000` to interactively switch between **Student Portal**, **Faculty Workspace**, and **Admin Control Center**.
+
+---
+
+### 2. ⚡ Real Frontend Application (`frontend/`)
+The production client codebase prepared for future Spring Boot REST API + MySQL backend integration.
+
+```bash
+# Navigate to the frontend directory
+cd frontend
+
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
+```
