@@ -1,51 +1,60 @@
 :root {
-  /* Color Palette - Premium Academic Theme */
-  --primary: #1e3a8a;
-  --primary-light: #2563eb;
-  --primary-hover: #1d4ed8;
-  --primary-dark: #0f172a;
+  /* Color Palette - TSDCEM Official Institutional Theme */
+  --primary: #002855;
+  --primary-light: #1e3a8a;
+  --primary-hover: #001f42;
+  --primary-dark: #071527;
   
   --secondary: #0284c7;
-  --accent: #06b6d4;
-  --accent-light: #ecfeff;
+  --accent: #0284c7;
+  --accent-light: #f0f9ff;
   
+  /* TSDCEM Brand Amber/Orange */
+  --brand-orange: #dc6803;
+  --brand-orange-light: #fff6ec;
+  --brand-orange-hover: #b54708;
+
   --gold: #d97706;
   --gold-light: #fef3c7;
   
-  --success: #10b981;
-  --warning: #f59e0b;
-  --error: #ef4444;
+  --success: #15803d;
+  --success-light: #f0fdf4;
+  --warning: #b45309;
+  --warning-light: #fffbeb;
+  --error: #b91c1c;
+  --error-light: #fef2f2;
 
   /* Neutrals */
   --bg-main: #f8fafc;
   --bg-surface: #ffffff;
-  --bg-glass: rgba(255, 255, 255, 0.85);
+  --bg-muted: #f1f5f9;
   --border-light: #e2e8f0;
   --border-subtle: #cbd5e1;
+  --border-dark: #94a3b8;
   
   /* Text */
   --text-primary: #0f172a;
-  --text-secondary: #475569;
+  --text-secondary: #334155;
   --text-muted: #64748b;
   --text-inverse: #ffffff;
 
   /* Typography */
-  --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
-  /* Elevation / Shadows */
+  /* Elevation / Shadows - Restrained & Institutional */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
-  --shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
-  --shadow-lg: 0 12px 32px -4px rgba(15, 23, 42, 0.12), 0 4px 12px -2px rgba(15, 23, 42, 0.06);
-  --shadow-glow: 0 0 25px rgba(37, 99, 235, 0.2);
+  --shadow-md: 0 4px 10px -1px rgba(15, 23, 42, 0.06), 0 2px 4px -1px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 10px 24px -3px rgba(15, 23, 42, 0.08), 0 4px 8px -2px rgba(15, 23, 42, 0.04);
 
-  /* Radius */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
+  /* Radius - Crisp & Modern Academic (Not Overly Rounded) */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
   --radius-pill: 9999px;
 
   /* Transitions */
   --transition-fast: 0.15s ease;
-  --transition-normal: 0.25s ease;
+  --transition-normal: 0.2s ease;
 }

@@ -21,7 +21,7 @@ export const StudentNavbar = ({ onToggleSidebar }) => {
           <div className="brand-divider" style={{ height: '20px' }}></div>
           <CampusConnectLogo className="brand-logo-img" style={{ height: '34px' }} />
           <span style={{ fontWeight: '800', fontFamily: 'var(--font-heading)', fontSize: '1.15rem', color: 'var(--primary-dark)', marginLeft: '4px' }}>
-            Campus Connect
+            Campus Connect <span style={{ color: "var(--brand-orange)", fontSize: "0.78rem", fontWeight: "700", marginLeft: "4px" }}>[TSDCEM]</span>
           </span>
         </Link>
       </div>

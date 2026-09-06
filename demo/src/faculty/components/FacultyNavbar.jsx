@@ -20,7 +20,7 @@ export const FacultyNavbar = ({ onToggleSidebar }) => {
           <div className="brand-divider" style={{ height: '20px', backgroundColor: '#0284c7' }}></div>
           <CampusConnectLogo className="brand-logo-img" style={{ height: '34px' }} />
           <span style={{ fontWeight: '800', fontFamily: 'var(--font-heading)', fontSize: '1.15rem', color: 'white', marginLeft: '4px' }}>
-            Campus Connect <span style={{ color: '#bae6fd', fontSize: '0.8rem', fontWeight: '600' }}>[FACULTY WORKSPACE]</span>
+            Campus Connect <span style={{ color: '#bae6fd', fontSize: '0.8rem', fontWeight: '600' }}>[TSDCEM • FACULTY WORKSPACE]</span>
           </span>
         </Link>
       </div>

@@ -1,11 +1,13 @@
 export const currentFaculty = {
   id: "fac-201",
-  name: "Prof. Dr. R. K. Gupta",
-  email: "rk.gupta@tsdcem.ac.in",
-  avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+  name: "Prof. Sumeet Rathod",
+  email: "sumeet.rathod@tsdcem.ac.in",
+  qualification: "MCA",
+  avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80",
   department: "Information Technology",
-  designation: "Professor & HOD",
-  subjects: ["Java Programming (IT302)", "Distributed Systems (IT401)"],
-  assignedClasses: ["SE IT Division A", "BE IT Division B"],
-  teams: ["SE IT — Java Group A", "Java Mini Project Team 4"]
+  departments: "MCA, IT div C,D",
+  designation: "Assistant Professor (MCA, IT div C,D)",
+  subjects: ["Java Programming (IT102)", "Web Technologies (IT202)", "Data Structures (IT104)"],
+  assignedClasses: ["First Year IT Division C", "Second Year IT Division D"],
+  teams: ["FY IT Div C — Java Project Group 2", "SY IT Div D — Web Application Team"]
 };

@@ -1,5 +1,6 @@
 export const mockFacultyAdmin = [
-  { id: "fac-201", name: "Prof. Dr. R. K. Gupta", email: "rk.gupta@tsdcem.ac.in", department: "Information Technology", designation: "Professor & HOD", status: "Active", assignedClasses: ["SE IT - Java Programming", "BE IT - Distributed Systems"] },
-  { id: "fac-202", name: "Prof. Sunita Sharma", email: "sunita.sharma@tsdcem.ac.in", department: "Information Technology", designation: "Associate Professor", status: "Active", assignedClasses: ["SE IT - Database Management"] },
-  { id: "fac-203", name: "Prof. Amit Verma", email: "amit.verma@tsdcem.ac.in", department: "Computer Engineering", designation: "Assistant Professor", status: "Active", assignedClasses: ["TE CS - Web Technologies"] }
+  { id: "fac-201", name: "Prof. Sumeet Rathod", email: "sumeet.rathod@tsdcem.ac.in", department: "IT", qualification: "MCA", designation: "Assistant Professor (MCA, IT div C,D)", status: "Active", assignedClasses: ["First Year IT Div C", "Second Year IT Div D"] },
+  { id: "fac-202", name: "Prof. Sunita Patil", email: "sunita.patil@tsdcem.ac.in", department: "CE", qualification: "M.Tech CE", designation: "Associate Professor", status: "Active", assignedClasses: ["First Year CE Div A", "Second Year CE Div B"] },
+  { id: "fac-203", name: "Dr. Amit Deshmukh", email: "amit.deshmukh@tsdcem.ac.in", department: "ECS", qualification: "Ph.D ECS", designation: "Professor & HOD", status: "Active", assignedClasses: ["Second Year ECS Div A"] },
+  { id: "fac-204", name: "Prof. Rajesh Nair", email: "rajesh.nair@tsdcem.ac.in", department: "AIDS", qualification: "M.Tech AIDS", designation: "Assistant Professor", status: "Active", assignedClasses: ["First Year AIDS Div A"] }
 ];

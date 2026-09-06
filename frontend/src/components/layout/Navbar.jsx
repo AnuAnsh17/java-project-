@@ -28,7 +28,7 @@ export const Navbar = () => {
           </div>
           <div className="brand-titles">
             <span className="brand-title-product">Campus Connect</span>
-            <span className="brand-title-college">Thakur Shree DPS College of Engg. & Mgmt.</span>
+            <span className="brand-title-college">TSDCEM</span>
           </div>
         </Link>
 

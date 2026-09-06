@@ -49,6 +49,7 @@ export const DemoRoleSelector = () => {
             </div>
 
             <h2 style={{ fontSize: '1.4rem', color: 'white', marginBottom: '0.5rem' }}>Student Portal Demo</h2>
+            <div style={{ color: '#f59e0b', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.6rem' }}>Logged in as: Anurag Yadav (IT • First Year Div C)</div>
             <p style={{ color: '#94a3b8', fontSize: '0.92rem', lineHeight: '1.5', marginBottom: '1.25rem' }}>
               Explore Reddit-style campus social feeds, category forums, club rosters, official notices, elections, assignments, attendance & complaints.
             </p>
@@ -72,6 +73,7 @@ export const DemoRoleSelector = () => {
             </div>
 
             <h2 style={{ fontSize: '1.4rem', color: 'white', marginBottom: '0.5rem' }}>Faculty Workspace Demo</h2>
+            <div style={{ color: '#38bdf8', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.6rem' }}>Logged in as: Prof. Sumeet Rathod (IT • MCA, Div C,D)</div>
             <p style={{ color: '#94a3b8', fontSize: '0.92rem', lineHeight: '1.5', marginBottom: '1.25rem' }}>
               Academic workspace for faculty to manage assigned classes, student rosters, create assignments, grade submissions, record attendance, and academic teams.
             </p>

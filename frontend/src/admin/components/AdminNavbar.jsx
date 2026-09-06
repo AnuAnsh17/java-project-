@@ -20,7 +20,7 @@ export const AdminNavbar = ({ onToggleSidebar }) => {
           <div className="brand-divider" style={{ height: '20px', backgroundColor: '#334155' }}></div>
           <CampusConnectLogo className="brand-logo-img" style={{ height: '34px' }} />
           <span style={{ fontWeight: '800', fontFamily: 'var(--font-heading)', fontSize: '1.15rem', color: 'white', marginLeft: '4px' }}>
-            Campus Connect <span style={{ color: '#38bdf8', fontSize: '0.8rem', fontWeight: '600' }}>[ADMIN]</span>
+            Campus Connect <span style={{ color: '#38bdf8', fontSize: '0.8rem', fontWeight: '600' }}>[TSDCEM • ADMIN]</span>
           </span>
         </Link>
       </div>
