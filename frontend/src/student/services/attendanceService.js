@@ -1,4 +1,8 @@
-// Placeholder for attendanceService
+import api from '../../services/api';
+import { mockAttendanceData } from '../mock/mockAttendance';
+
 export const attendanceService = {
-  // API endpoints to be integrated
+  async getAttendance() {
+    return Promise.resolve(mockAttendanceData);
+  }
 };

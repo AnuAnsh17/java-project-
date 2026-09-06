@@ -1,4 +1,8 @@
-// Placeholder for noticeService
+import api from '../../services/api';
+import { mockNoticesData } from '../mock/mockNotices';
+
 export const noticeService = {
-  // API endpoints to be integrated
+  async getNotices() {
+    return Promise.resolve(mockNoticesData);
+  }
 };
