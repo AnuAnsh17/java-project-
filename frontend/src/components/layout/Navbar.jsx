@@ -49,16 +49,14 @@ export const Navbar = () => {
             <a href="#roles" className="nav-link" onClick={() => handleNavClick('#roles')}>Roles</a>
           </li>
           <li>
-            <button
+            <Link
+              to="/login"
               className="btn btn-primary"
-              onClick={() => {
-                setMobileOpen(false);
-                navigate('/login');
-              }}
+              onClick={() => setMobileOpen(false)}
             >
               <LogIn size={18} />
               Login
-            </button>
+            </Link>
           </li>
         </ul>
 

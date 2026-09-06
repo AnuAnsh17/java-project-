@@ -1,3 +1,4 @@
+import { useDemo } from '../../context/DemoContext';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock, LogIn, ShieldCheck, Briefcase, GraduationCap, ArrowRight } from 'lucide-react';
@@ -7,6 +8,7 @@ import { useAuth } from '../hooks/useAuth';
 
 export const LoginCard = () => {
   const { selectedRole, setSelectedRole, validateCollegeEmail } = useAuth();
+  const { switchRole } = useDemo();
   const navigate = useNavigate();
 
   // Role default credentials for smooth demonstration
@@ -63,12 +65,14 @@ export const LoginCard = () => {
     }
 
     setEmailError('');
+    if (typeof switchRole === 'function') switchRole(selectedRole);
     const targetPath = roleDefaults[selectedRole]?.path || `/${selectedRole}`;
     navigate(targetPath);
   };
 
   const handleQuickEnter = (role) => {
     setSelectedRole(role);
+    if (typeof switchRole === 'function') switchRole(role);
     const targetPath = roleDefaults[role]?.path || `/${role}`;
     navigate(targetPath);
   };

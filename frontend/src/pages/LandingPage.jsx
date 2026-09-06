@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   MessageSquare,
   Users,
@@ -46,13 +46,13 @@ export const LandingPage = () => {
               </p>
 
               <div className="hero-actions">
-                <button
+                <Link
+                  to="/login"
                   className="btn btn-primary"
-                  onClick={() => navigate('/login')}
                 >
                   Login to Campus Connect
                   <ArrowRight size={18} />
-                </button>
+                </Link>
                 <a href="#features" className="btn btn-outline">
                   Explore the Platform
                 </a>
@@ -420,14 +420,14 @@ export const LandingPage = () => {
           <div className="final-cta-box">
             <h2>Welcome to your campus, connected.</h2>
             <p>Access Campus Connect using your official TSDCEM college account.</p>
-            <button
+            <Link
+              to="/login"
               className="btn btn-primary"
-              style={{ padding: '0.9rem 2.2rem', fontSize: '1.05rem' }}
-              onClick={() => navigate('/login')}
+              style={{ padding: '0.9rem 2.2rem', fontSize: '1.05rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'center' }}
             >
               Login to Campus Connect
               <ArrowRight size={20} />
-            </button>
+            </Link>
           </div>
         </div>
       </section>

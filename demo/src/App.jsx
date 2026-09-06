@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { DemoProvider } from './context/DemoContext';
+import { AuthProvider } from './auth/context/AuthContext';
 import { DemoRoleSelector } from './pages/DemoRoleSelector';
 import { LandingPage } from './pages/LandingPage';
 import { Login } from './auth/pages/Login';
@@ -68,7 +69,8 @@ import { FacultyProfile } from './faculty/pages/FacultyProfile';
 export default function App() {
   return (
     <DemoProvider>
-      <Router>
+      <AuthProvider>
+        <Router>
         <Routes>
           {/* Demo Entry & Public Landing */}
           <Route path="/" element={<DemoRoleSelector />} />
@@ -146,6 +148,7 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
+      </AuthProvider>
     </DemoProvider>
   );
 }

@@ -4,7 +4,14 @@ import { AuthContext } from '../context/AuthContext';
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    return {
+      user: { name: 'Anurag Yadav', role: 'student', email: 'anurag.yadav@tsdcem.ac.in' },
+      selectedRole: 'student',
+      setSelectedRole: () => {},
+      loading: false,
+      setLoading: () => {},
+      validateCollegeEmail: (email) => /^[a-zA-Z0-9._%+-]+@tsdcem\.ac\.in$/.test(email)
+    };
   }
   return context;
 };

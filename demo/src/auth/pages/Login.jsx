@@ -10,7 +10,7 @@ export const Login = () => {
     <div className="auth-page">
       <header className="auth-navbar">
         <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '600', color: 'var(--primary)', fontSize: '0.92rem' }}>
+          <Link to="/landing" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '600', color: 'var(--primary)', fontSize: '0.92rem' }}>
             <ArrowLeft size={18} />
             Back to Campus Connect
           </Link>
