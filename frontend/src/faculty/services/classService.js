@@ -1,4 +1,18 @@
-// Placeholder for classService
+import api from '../../services/api';
+import { mockClassesFaculty } from '../mock/mockClasses';
+import { mockClassStudentsFaculty } from '../mock/mockStudents';
+
 export const classService = {
-  // Faculty API endpoints to be integrated
+  async getClasses() {
+    return Promise.resolve(mockClassesFaculty);
+  },
+
+  async getClassById(id) {
+    const cls = mockClassesFaculty.find(c => c.id === id);
+    return Promise.resolve(cls || null);
+  },
+
+  async getClassStudents(classId) {
+    return Promise.resolve(mockClassStudentsFaculty);
+  }
 };

@@ -47,6 +47,23 @@ import { ManageReports } from './admin/pages/ManageReports';
 import { ReportDetails } from './admin/pages/ReportDetails';
 import { AdminProfile } from './admin/pages/AdminProfile';
 
+// Faculty Module Layout & Pages
+import { FacultyLayout } from './faculty/pages/FacultyLayout';
+import { FacultyDashboard } from './faculty/pages/FacultyDashboard';
+import { MyClasses } from './faculty/pages/MyClasses';
+import { ClassDetails } from './faculty/pages/ClassDetails';
+import { Assignments } from './faculty/pages/Assignments';
+import { CreateAssignment } from './faculty/pages/CreateAssignment';
+import { AssignmentDetailsFaculty } from './faculty/pages/AssignmentDetails';
+import { Submissions } from './faculty/pages/Submissions';
+import { AttendanceFaculty } from './faculty/pages/Attendance';
+import { TakeAttendance } from './faculty/pages/TakeAttendance';
+import { TeamsFaculty } from './faculty/pages/Teams';
+import { CreateTeamFaculty } from './faculty/pages/CreateTeam';
+import { TeamDetailsFaculty } from './faculty/pages/TeamDetails';
+import { AnnouncementsFaculty } from './faculty/pages/Announcements';
+import { FacultyProfile } from './faculty/pages/FacultyProfile';
+
 import './styles/global.css';
 
 export default function App() {
@@ -101,6 +118,28 @@ export default function App() {
             <Route path="reports" element={<ManageReports />} />
             <Route path="reports/:id" element={<ReportDetails />} />
             <Route path="profile" element={<AdminProfile />} />
+          </Route>
+
+          {/* Faculty Workspace Routes */}
+          <Route path="/faculty" element={<FacultyLayout />}>
+            <Route index element={<FacultyDashboard />} />
+            <Route path="classes" element={<MyClasses />} />
+            <Route path="classes/:id" element={<ClassDetails />} />
+            <Route path="assignments" element={<Assignments />} />
+            <Route path="assignments/create" element={<CreateAssignment />} />
+            <Route path="assignments/:id" element={<AssignmentDetailsFaculty />} />
+            <Route path="assignments/:id/submissions" element={<Submissions />} />
+            <Route path="submissions" element={<Submissions />} />
+            <Route path="attendance" element={<AttendanceFaculty />} />
+            <Route path="attendance/take" element={<TakeAttendance />} />
+            <Route path="attendance/history" element={<AttendanceFaculty />} />
+            <Route path="teams" element={<TeamsFaculty />} />
+            <Route path="teams/create" element={<CreateTeamFaculty />} />
+            <Route path="teams/:id" element={<TeamDetailsFaculty />} />
+            <Route path="teams/:id/members" element={<TeamDetailsFaculty />} />
+            <Route path="teams/:id/discussions" element={<TeamDetailsFaculty />} />
+            <Route path="announcements" element={<AnnouncementsFaculty />} />
+            <Route path="profile" element={<FacultyProfile />} />
           </Route>
 
           {/* Fallback */}
