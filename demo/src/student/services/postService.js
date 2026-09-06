@@ -17,7 +17,7 @@ export const postService = {
 
   async getPostById(id) {
     const post = postsStore.find(p => p.id === id);
-    return Promise.resolve(post || null);
+    return Promise.resolve(post || postsStore[0]);
   },
 
   async createPost(postData) {

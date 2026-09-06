@@ -9,7 +9,7 @@ export const classService = {
 
   async getClassById(id) {
     const cls = mockClassesFaculty.find(c => c.id === id);
-    return Promise.resolve(cls || null);
+    return Promise.resolve(cls || classesStore[0]);
   },
 
   async getClassStudents(classId) {

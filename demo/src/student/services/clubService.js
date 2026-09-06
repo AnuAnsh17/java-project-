@@ -10,7 +10,7 @@ export const clubService = {
 
   async getClubById(id) {
     const club = clubsStore.find(c => c.id === id);
-    return Promise.resolve(club || null);
+    return Promise.resolve(club || clubsStore[0]);
   },
 
   async toggleJoinClub(id) {

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { AdminNavbar } from '../components/AdminNavbar';
 import { AdminSidebar } from '../components/AdminSidebar';
+import { AdminProvider } from '../context/AdminContext';
 import { DemoHeaderBar } from '../../components/DemoHeaderBar';
 import '../styles/admin.css';
 
@@ -9,7 +10,7 @@ export const AdminLayout = () => {
   const [mobileSidebar, setMobileSidebar] = useState(false);
 
   return (
-    <div>
+    <AdminProvider>
       <DemoHeaderBar />
       <div className="admin-app-shell">
         <AdminNavbar onToggleSidebar={() => setMobileSidebar(!mobileSidebar)} />
@@ -20,6 +21,6 @@ export const AdminLayout = () => {
           </main>
         </div>
       </div>
-    </div>
+    </AdminProvider>
   );
 };

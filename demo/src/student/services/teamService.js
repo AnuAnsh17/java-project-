@@ -8,6 +8,6 @@ export const teamService = {
 
   async getTeamById(id) {
     const team = mockTeamsData.find(t => t.id === id);
-    return Promise.resolve(team || null);
+    return Promise.resolve(team || teamsStore[0]);
   }
 };

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { FacultyNavbar } from '../components/FacultyNavbar';
 import { FacultySidebar } from '../components/FacultySidebar';
+import { FacultyProvider } from '../context/FacultyContext';
 import { DemoHeaderBar } from '../../components/DemoHeaderBar';
 import '../styles/faculty.css';
 
@@ -9,7 +10,7 @@ export const FacultyLayout = () => {
   const [mobileSidebar, setMobileSidebar] = useState(false);
 
   return (
-    <div>
+    <FacultyProvider>
       <DemoHeaderBar />
       <div className="faculty-app-shell">
         <FacultyNavbar onToggleSidebar={() => setMobileSidebar(!mobileSidebar)} />
@@ -20,6 +21,6 @@ export const FacultyLayout = () => {
           </main>
         </div>
       </div>
-    </div>
+    </FacultyProvider>
   );
 };
