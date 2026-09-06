@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <linearGradient id="crestGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e3a8a"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+  </defs>
+  <!-- Shield Outer -->
+  <path d="M 100 20 L 170 45 C 170 120 130 165 100 185 C 70 165 30 120 30 45 Z" fill="url(#crestGrad)" stroke="url(#goldGrad)" stroke-width="6"/>
+  <!-- Inner Shield Line -->
+  <path d="M 100 32 L 158 53 C 158 115 124 152 100 170 C 76 152 42 115 42 53 Z" fill="none" stroke="url(#goldGrad)" stroke-width="2" stroke-dasharray="4,2"/>
+  <!-- Mortarboard Icon -->
+  <polygon points="100,55 145,75 100,95 55,75" fill="url(#goldGrad)"/>
+  <polygon points="75,85 75,108 100,120 125,108 125,85 100,98" fill="#ffffff" opacity="0.9"/>
+  <!-- Book Icon -->
+  <path d="M 75 130 Q 100 122 100 148 Q 100 122 125 130 L 125 155 Q 100 147 100 162 Q 100 147 75 155 Z" fill="url(#goldGrad)"/>
+  <!-- Text TSDCEM -->
+  <text x="100" y="112" font-family="'Outfit', sans-serif" font-weight="800" font-size="14" fill="#ffffff" text-anchor="middle" letter-spacing="1">TSDCEM</text>
+</svg>

@@ -1,0 +1,218 @@
+/* Authentication Module Styles */
+
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(circle at 50% 10%, rgba(37, 99, 235, 0.08) 0%, transparent 60%),
+              radial-gradient(circle at 80% 80%, rgba(6, 182, 212, 0.06) 0%, transparent 50%),
+              #f8fafc;
+}
+
+.auth-navbar {
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--border-light);
+  background: var(--bg-glass);
+  backdrop-filter: blur(8px);
+}
+
+.auth-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+}
+
+.auth-card-wrapper {
+  width: 100%;
+  max-width: 480px;
+}
+
+.auth-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  box-shadow: var(--shadow-lg);
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.auth-header-logos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.auth-header-logo-img {
+  height: 48px;
+  width: auto;
+}
+
+.auth-title {
+  font-size: 1.75rem;
+  color: var(--primary-dark);
+  margin-bottom: 0.35rem;
+}
+
+.auth-subtitle {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+/* Role Selector */
+.role-selector-container {
+  margin-bottom: 1.75rem;
+}
+
+.role-selector-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.role-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+}
+
+.role-tab {
+  padding: 0.6rem 0.5rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  border-radius: calc(var(--radius-md) - 2px);
+  transition: all var(--transition-fast);
+  text-align: center;
+}
+
+.role-tab.active {
+  background: var(--bg-surface);
+  color: var(--primary-light);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Input Fields */
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.4rem;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 1rem;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.8rem 1rem 0.8rem 2.8rem;
+  font-size: 0.95rem;
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  transition: all var(--transition-fast);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary-light);
+  background-color: var(--bg-surface);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+.form-input.is-invalid {
+  border-color: var(--error);
+  background-color: #fef2f2;
+}
+
+.form-input.is-invalid:focus {
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.12);
+}
+
+.validation-error {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--error);
+  font-size: 0.82rem;
+  font-weight: 500;
+  margin-top: 0.4rem;
+}
+
+.domain-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.4rem;
+}
+
+/* Notice / Dev State */
+.auth-restriction-notice {
+  background-color: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.85rem;
+  color: #0369a1;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+
+.dev-state-box {
+  background-color: #fef3c7;
+  border: 1px solid #fde68a;
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  margin-top: 1.25rem;
+  color: #92400e;
+  font-size: 0.88rem;
+  text-align: center;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 0.85rem;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
+
+.auth-footer-text {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
