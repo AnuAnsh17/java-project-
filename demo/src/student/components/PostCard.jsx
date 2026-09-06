@@ -20,7 +20,7 @@ export const PostCard = ({ post }) => {
   };
 
   return (
-    <div className="student-card student-card-hover" style={{ marginBottom: '1.25rem' }}>
+    <div className="student-card student-card-hover" style={{ marginBottom: '1.25rem', overflow: 'hidden', minWidth: 0, wordBreak: 'break-word' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <img

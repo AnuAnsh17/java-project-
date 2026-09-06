@@ -6,7 +6,7 @@ export const mockPostsData = [
   {
     id: "post-1",
     authorName: "Anurag Yadav",
-    authorRole: "First Year IT • Div C",
+    authorRole: "Second Year IT • Div C",
     authorAvatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80",
     timeAgo: "2 hours ago",
     category: "Events",
@@ -33,7 +33,7 @@ export const mockPostsData = [
       {
         id: "c-3",
         authorName: "Anurag Yadav",
-        authorRole: "First Year IT",
+        authorRole: "Second Year IT • Div C",
         timeAgo: "25 mins ago",
         content: "Registration opens on Campus Connect this Thursday!"
       }
@@ -55,7 +55,7 @@ export const mockPostsData = [
       {
         id: "c-4",
         authorName: "Anurag Yadav",
-        authorRole: "First Year IT",
+        authorRole: "Second Year IT • Div C",
         timeAgo: "3 hours ago",
         content: "Submitted on the portal Professor. Thank you for the references."
       }

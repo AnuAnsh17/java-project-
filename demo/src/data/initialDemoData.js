@@ -4,14 +4,14 @@ export const initialDemoData = {
     name: "Anurag Yadav",
     email: "anurag.yadav@tsdcem.ac.in",
     rollNo: "IT202501",
-    department: "Information Technology",
+    department: "IT",
     branch: "IT",
-    year: "First Year",
-    division: "Division C",
+    year: "Second Year",
+    division: "C",
     avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80",
     memberships: ["Coding Club", "Technical Committee"],
     positions: [
-      { title: "Student Representative", organization: "First Year IT Div C", badge: "Class Representative" },
+      { title: "Student Representative", organization: "Second Year IT Div C", badge: "Class Representative" },
       { title: "Executive Member", organization: "Coding Club", badge: "Technical Cell" }
     ],
     attendancePercentage: 88.5,
@@ -40,7 +40,7 @@ export const initialDemoData = {
   },
 
   students: [
-    { id: "st-101", rollNo: "IT202501", name: "Anurag Yadav", email: "anurag.yadav@tsdcem.ac.in", branch: "IT", year: "First Year", division: "C", attendancePercentage: 88.5, assignmentStatus: "Graded (19/20)", status: "Active" },
+    { id: "st-101", rollNo: "IT202501", name: "Anurag Yadav", email: "anurag.yadav@tsdcem.ac.in", branch: "IT", year: "Second Year", division: "C", attendancePercentage: 88.5, assignmentStatus: "Graded (19/20)", status: "Active" },
     { id: "st-102", rollNo: "CE202512", name: "Atul Tiwari", email: "atul.tiwari@tsdcem.ac.in", branch: "CE", year: "First Year", division: "A", attendancePercentage: 85.0, assignmentStatus: "Submitted", status: "Active" },
     { id: "st-103", rollNo: "IT202408", name: "Hrishabh Soni", email: "hrishabh.soni@tsdcem.ac.in", branch: "IT", year: "Second Year", division: "B", attendancePercentage: 91.5, assignmentStatus: "Submitted", status: "Active" },
     { id: "st-104", rollNo: "AIDS202514", name: "Priya Sharma", email: "priya.sharma@tsdcem.ac.in", branch: "AIDS", year: "First Year", division: "A", attendancePercentage: 94.0, assignmentStatus: "Submitted", status: "Active" },
@@ -59,7 +59,7 @@ export const initialDemoData = {
     {
       id: "post-1",
       author: "Anurag Yadav",
-      authorRole: "First Year IT • Div C",
+      authorRole: "Second Year IT • Div C",
       authorAvatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80",
       time: "2 hours ago",
       category: "Events",
@@ -71,7 +71,7 @@ export const initialDemoData = {
       comments: [
         { id: "c-1", author: "Atul Tiwari", authorRole: "First Year CE", time: "1 hour ago", text: "Are First Year students allowed to form inter-department teams with IT and CE?" },
         { id: "c-2", author: "Hrishabh Soni", authorRole: "Second Year IT", time: "40 mins ago", text: "Yes! Inter-branch teams of 2 to 4 students across CE, IT, ECS, and AIDS are encouraged." },
-        { id: "c-3", author: "Anurag Yadav", authorRole: "First Year IT", time: "25 mins ago", text: "Registration portal opens this Thursday on Campus Connect." }
+        { id: "c-3", author: "Anurag Yadav", authorRole: "Second Year IT • Div C", time: "25 mins ago", text: "Registration portal opens this Thursday on Campus Connect." }
       ]
     },
     {
@@ -103,7 +103,7 @@ export const initialDemoData = {
       downvotes: 0,
       userVoted: null,
       comments: [
-        { id: "c-5", author: "Anurag Yadav", authorRole: "First Year IT", time: "18 hours ago", text: "Submitted on the portal Professor. Thank you for the multi-threading reference notes." },
+        { id: "c-5", author: "Anurag Yadav", authorRole: "Second Year IT • Div C", time: "18 hours ago", text: "Submitted on the portal Professor. Thank you for the multi-threading reference notes." },
         { id: "c-6", author: "Hrishabh Soni", authorRole: "Second Year IT", time: "12 hours ago", text: "Good luck First Years! Solid understanding of OOP in FY makes SY software engineering very smooth." }
       ]
     }
@@ -141,7 +141,7 @@ export const initialDemoData = {
       totalVotes: 384,
       userVoted: false,
       candidates: [
-        { id: "cand-1", name: "Anurag Yadav", department: "IT (First Year Div C)", manifesto: "Transparent club funding, digital lab queues, and extended library resources.", votes: 215 },
+        { id: "cand-1", name: "Anurag Yadav", department: "IT (Second Year Div C)", manifesto: "Transparent club funding, digital lab queues, and extended library resources.", votes: 215 },
         { id: "cand-2", name: "Atul Tiwari", department: "CE (First Year Div A)", manifesto: "Better inter-branch sports tournaments, gymnasium timings, and coding workshops.", votes: 169 }
       ]
     },

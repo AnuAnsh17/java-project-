@@ -25,7 +25,7 @@ export const StudentProfile = () => {
           <div>
             <h2 style={{ fontSize: '1.6rem', color: 'var(--primary-dark)', marginBottom: '0.2rem' }}>{profile?.name}</h2>
             <p style={{ color: 'var(--primary-light)', fontWeight: '600', fontSize: '0.95rem', marginBottom: '0.4rem' }}>
-              {profile?.branch} • {profile?.year}
+              Second Year IT • Div C
             </p>
             <div style={{ display: 'flex', gap: '1rem', color: 'var(--text-muted)', fontSize: '0.88rem' }}>
               <span><Mail size={14} style={{ display: 'inline', marginRight: '4px' }} />{profile?.email}</span>

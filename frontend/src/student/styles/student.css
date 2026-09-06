@@ -102,6 +102,9 @@
   padding: 1.5rem;
   box-shadow: var(--shadow-xs);
   margin-bottom: 1.25rem;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .student-page-header {
@@ -164,4 +167,33 @@
 
 .notif-item:hover {
   background: var(--bg-muted);
+}
+
+/* Student Dashboard Responsive 2-Column Layout */
+.student-dashboard-main-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(0, 1.15fr);
+  gap: 1.75rem;
+  align-items: start;
+  width: 100%;
+}
+
+.student-dashboard-main-grid > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.student-dashboard-feed-col,
+.student-dashboard-events-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  width: 100%;
+}
+
+@media (max-width: 991px) {
+  .student-dashboard-main-grid {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
 }

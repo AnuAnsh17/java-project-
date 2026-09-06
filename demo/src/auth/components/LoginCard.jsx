@@ -13,7 +13,7 @@ export const LoginCard = () => {
   const roleDefaults = {
     student: {
       name: 'Anurag Yadav',
-      desc: 'First Year IT Div C (Roll: IT202501)',
+      desc: 'Second Year IT Div C (Roll: IT202501)',
       email: 'anurag.yadav@tsdcem.ac.in',
       path: '/student'
     },
@@ -116,7 +116,7 @@ export const LoginCard = () => {
             <GraduationCap size={20} color="#15803d" style={{ flexShrink: 0, marginRight: '8px' }} />
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontWeight: '700', fontSize: '0.88rem', color: '#0f172a' }}>Enter as Student: Anurag Yadav</div>
-              <div style={{ fontSize: '0.76rem', color: '#64748b' }}>IT • First Year Div C • Roll: IT202501</div>
+              <div style={{ fontSize: '0.76rem', color: '#64748b' }}>IT • Second Year Div C • Roll: IT202501</div>
             </div>
             <ArrowRight size={16} color="#64748b" />
           </button>

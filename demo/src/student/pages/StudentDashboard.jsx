@@ -45,8 +45,8 @@ export const StudentDashboard = () => {
         <h1 style={{ color: 'white', fontSize: '1.8rem', marginBottom: '0.4rem' }}>
           Welcome back, {profile?.name || "Student"} 👋
         </h1>
-        <p style={{ color: '#94a3b8', fontSize: '1rem' }}>
-          {profile?.branch} • {profile?.year} • {profile?.division}
+        <p style={{ color: '#94a3b8', fontSize: '1rem', fontWeight: '500' }}>
+          Second Year IT • Div C
         </p>
       </div>
 
@@ -76,21 +76,53 @@ export const StudentDashboard = () => {
         </div>
       </div>
 
-      <div className="grid-2" style={{ marginBottom: '2rem' }}>
-        <div>
-          <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--primary-dark)' }}>Recent Official Notices</h2>
-          {notices.map(n => <NoticeCard key={n.id} notice={n} />)}
-        </div>
+      {/* Responsive Two-Column Layout: Feed on Left, Events & Notices on Right */}
+      <div className="student-dashboard-main-grid">
+        {/* Left Column: Campus Discussions Feed */}
+        <section className="student-dashboard-feed-col" aria-label="Campus Discussions Feed">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+            <h2 style={{ fontSize: '1.25rem', color: 'var(--primary-dark)', margin: 0 }}>Campus Discussions Feed</h2>
+            <button
+              onClick={() => navigate('/student/feed')}
+              className="btn btn-outline"
+              style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem' }}
+            >
+              View Full Feed
+            </button>
+          </div>
+          {posts.map(p => <PostCard key={p.id} post={p} />)}
+        </section>
 
-        <div>
-          <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--primary-dark)' }}>Upcoming Events</h2>
-          {events.map(ev => <EventCard key={ev.id} event={ev} onRegister={() => navigate('/student/events')} />)}
-        </div>
-      </div>
+        {/* Right Column: Upcoming Events & Notices */}
+        <section className="student-dashboard-events-col" aria-label="Upcoming Events and Notices">
+          <div style={{ marginBottom: '2rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+              <h2 style={{ fontSize: '1.25rem', color: 'var(--primary-dark)', margin: 0 }}>Upcoming Events</h2>
+              <button
+                onClick={() => navigate('/student/events')}
+                className="btn btn-outline"
+                style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem' }}
+              >
+                All Events
+              </button>
+            </div>
+            {events.map(ev => <EventCard key={ev.id} event={ev} onRegister={() => navigate('/student/events')} />)}
+          </div>
 
-      <div>
-        <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--primary-dark)' }}>Campus Discussions Feed</h2>
-        {posts.map(p => <PostCard key={p.id} post={p} />)}
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+              <h2 style={{ fontSize: '1.25rem', color: 'var(--primary-dark)', margin: 0 }}>Recent Official Notices</h2>
+              <button
+                onClick={() => navigate('/student/notices')}
+                className="btn btn-outline"
+                style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem' }}
+              >
+                All Notices
+              </button>
+            </div>
+            {notices.map(n => <NoticeCard key={n.id} notice={n} />)}
+          </div>
+        </section>
       </div>
     </div>
   );
