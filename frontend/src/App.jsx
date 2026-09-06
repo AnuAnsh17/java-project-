@@ -29,6 +29,24 @@ import { Complaints } from './student/pages/Complaints';
 import { MyOrganizations } from './student/pages/MyOrganizations';
 import { MyActivity } from './student/pages/MyActivity';
 
+// Admin Module Layout & Pages
+import { AdminLayout } from './admin/pages/AdminLayout';
+import { AdminDashboard } from './admin/pages/AdminDashboard';
+import { ManageStudents } from './admin/pages/ManageStudents';
+import { ManageFaculty } from './admin/pages/ManageFaculty';
+import { ManageClubs } from './admin/pages/ManageClubs';
+import { ManageCommittees } from './admin/pages/ManageCommittees';
+import { ManageOrganizations } from './admin/pages/ManageOrganizations';
+import { ManageAppointments } from './admin/pages/ManageAppointments';
+import { ManageEvents } from './admin/pages/ManageEvents';
+import { ManageNotices } from './admin/pages/ManageNotices';
+import { ManageElections } from './admin/pages/ManageElections';
+import { CandidateManagement } from './admin/pages/CandidateManagement';
+import { ElectionResults } from './admin/pages/ElectionResults';
+import { ManageReports } from './admin/pages/ManageReports';
+import { ReportDetails } from './admin/pages/ReportDetails';
+import { AdminProfile } from './admin/pages/AdminProfile';
+
 import './styles/global.css';
 
 export default function App() {
@@ -40,7 +58,7 @@ export default function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
 
-          {/* Student Application Module Routes */}
+          {/* Student Module Routes */}
           <Route path="/student" element={<StudentLayout />}>
             <Route index element={<StudentDashboard />} />
             <Route path="profile" element={<StudentProfile />} />
@@ -66,7 +84,26 @@ export default function App() {
             <Route path="activity" element={<MyActivity />} />
           </Route>
 
-          {/* Catch-all fallback */}
+          {/* Admin Control Center Routes */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="students" element={<ManageStudents />} />
+            <Route path="faculty" element={<ManageFaculty />} />
+            <Route path="clubs" element={<ManageClubs />} />
+            <Route path="committees" element={<ManageCommittees />} />
+            <Route path="organizations" element={<ManageOrganizations />} />
+            <Route path="appointments" element={<ManageAppointments />} />
+            <Route path="events" element={<ManageEvents />} />
+            <Route path="notices" element={<ManageNotices />} />
+            <Route path="elections" element={<ManageElections />} />
+            <Route path="elections/candidates" element={<CandidateManagement />} />
+            <Route path="elections/results" element={<ElectionResults />} />
+            <Route path="reports" element={<ManageReports />} />
+            <Route path="reports/:id" element={<ReportDetails />} />
+            <Route path="profile" element={<AdminProfile />} />
+          </Route>
+
+          {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>

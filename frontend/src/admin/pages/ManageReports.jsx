@@ -1,11 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { reportService } from '../services/reportService';
+import { ReportTable } from '../components/ReportTable';
 
-const ManageReports = () => {
+export const ManageReports = () => {
+  const [reports, setReports] = useState([]);
+
+  useEffect(() => {
+    async function load() {
+      const rep = await reportService.getReports();
+      setReports(rep);
+    }
+    load();
+  }, []);
+
   return (
-    <div className="managereports-container">
-      <h2>ManageReports</h2>
+    <div>
+      <div className="student-page-header">
+        <div className="student-page-title">
+          <h1>Reports & Complaints Management</h1>
+          <p>Review student grievance submissions with respect for identity preferences</p>
+        </div>
+      </div>
+
+      <ReportTable reports={reports} />
     </div>
   );
 };
-
-export default ManageReports;
