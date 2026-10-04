@@ -4,9 +4,11 @@ import { Menu, X, LogOut, User } from 'lucide-react';
 import { CollegeLogo, CampusConnectLogo } from '../../components/common/PlaceholderLogo';
 import { NotificationBell } from './NotificationBell';
 import { useStudent } from '../hooks/useStudent';
+import { useAuth } from '../../auth/hooks/useAuth';
 
 export const StudentNavbar = ({ onToggleSidebar }) => {
   const { profile } = useStudent();
+  const { logout } = useAuth();
   const navigate = useNavigate();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
@@ -50,7 +52,7 @@ export const StudentNavbar = ({ onToggleSidebar }) => {
               </div>
               <div
                 className="notif-item"
-                onClick={() => { setShowProfileMenu(false); navigate('/login'); }}
+                onClick={() => { setShowProfileMenu(false); logout(); navigate('/login', { replace: true }); }}
                 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.88rem', color: 'var(--error)' }}
               >
                 <LogOut size={16} /> Logout

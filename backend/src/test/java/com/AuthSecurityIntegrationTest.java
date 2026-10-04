@@ -19,7 +19,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(properties = {
+        "DEMO_ACCOUNTS_ENABLED=true",
+        "DEMO_ADMIN_EMAIL=integration.admin@tsdcem.ac.in",
+        "DEMO_ADMIN_PASSWORD=IntegrationDemo123",
+        "DEMO_FACULTY_EMAIL=integration.faculty@tsdcem.ac.in",
+        "DEMO_FACULTY_PASSWORD=IntegrationDemo123"
+})
 @AutoConfigureMockMvc
 @ActiveProfiles("dev")
 class AuthSecurityIntegrationTest {
@@ -40,6 +46,11 @@ class AuthSecurityIntegrationTest {
         String token = registrationJson.path("token").asText();
         assertFalse(token.isBlank());
         assertEquals("STUDENT", registrationJson.path("user").path("role").asText());
+
+        String studentJson = mvc.perform(get("/api/students/" + registrationJson.path("user").path("id").asLong())
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        assertFalse(objectMapper.readTree(studentJson).has("passwordHash"));
 
         mvc.perform(get("/api/posts")).andExpect(status().isUnauthorized());
         mvc.perform(get("/api/posts").header("Authorization", "Bearer " + token))
@@ -71,6 +82,27 @@ class AuthSecurityIntegrationTest {
         mvc.perform(post("/api/assignments").header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isForbidden());
+        mvc.perform(get("/api/students").header("Authorization", "Bearer " + token))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void provisionedFacultyAndAdminRolesAreEnforced() throws Exception {
+        String facultyResponse = mvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"integration.faculty@tsdcem.ac.in\",\"password\":\"IntegrationDemo123\"}"))
+                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        String facultyToken = objectMapper.readTree(facultyResponse).path("token").asText();
+        mvc.perform(post("/api/assignments").header("Authorization", "Bearer " + facultyToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"Faculty API test\",\"status\":\"PENDING\"}"))
+                .andExpect(status().isCreated());
+
+        String adminResponse = mvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"integration.admin@tsdcem.ac.in\",\"password\":\"IntegrationDemo123\"}"))
+                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        String adminToken = objectMapper.readTree(adminResponse).path("token").asText();
+        mvc.perform(get("/api/students").header("Authorization", "Bearer " + adminToken))
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -84,11 +116,25 @@ class AuthSecurityIntegrationTest {
                 .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString();
         String token = objectMapper.readTree(authResponse).path("token").asText();
 
+        String otherEmail = "other." + UUID.randomUUID() + "@tsdcem.ac.in";
+        String otherRegistration = """
+                {"name":"Other Student","email":"%s","password":"CampusDemo123"}
+                """.formatted(otherEmail);
+        String otherResponse = mvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON).content(otherRegistration))
+                .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString();
+        String otherToken = objectMapper.readTree(otherResponse).path("token").asText();
+
         String created = mvc.perform(post("/api/posts").header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\":\"Persisted post\",\"content\":\"Saved in JPA\",\"category\":\"General\"}"))
                 .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString();
         long id = objectMapper.readTree(created).path("id").asLong();
+        assertEquals("CRUD Student", objectMapper.readTree(created).path("authorName").asText());
+        mvc.perform(put("/api/posts/" + id).header("Authorization", "Bearer " + otherToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"Hijacked\",\"content\":\"No\",\"category\":\"General\"}"))
+                .andExpect(status().isForbidden());
         mvc.perform(get("/api/posts/" + id).header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
 

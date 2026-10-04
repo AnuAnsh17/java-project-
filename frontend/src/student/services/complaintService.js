@@ -1,24 +1,24 @@
 import api from '../../services/api';
-import { mockComplaintsData } from '../mock/mockComplaints';
 
-let complaintsStore = [...mockComplaintsData];
+const mapComplaint = (item) => ({
+  ...item,
+  subject: item.title,
+  dateSubmitted: 'Submitted to Campus Connect',
+  identityMode: item.anonymous ? 'Anonymous' : 'Identified'
+});
 
 export const complaintService = {
   async getComplaints() {
-    return Promise.resolve(complaintsStore);
+    const response = await api.get('/complaints');
+    return response.data.map(mapComplaint);
   },
-
   async submitComplaint(data) {
-    const newComplaint = {
-      id: `cmp-${Date.now()}`,
-      subject: data.subject,
-      category: data.category || "General",
-      dateSubmitted: "Just now",
-      status: "Under Review",
-      identityMode: data.identityMode || "Anonymous",
-      description: data.description
-    };
-    complaintsStore.unshift(newComplaint);
-    return Promise.resolve(newComplaint);
+    const response = await api.post('/complaints', {
+      title: data.subject,
+      category: data.category,
+      description: data.description,
+      anonymous: data.identityMode === 'Anonymous'
+    });
+    return mapComplaint(response.data);
   }
 };

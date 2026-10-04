@@ -2,6 +2,7 @@ package com.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "complaints")
@@ -20,6 +21,9 @@ public class Complaint {
     private String category;
     private String status;
     private String submittedBy;
+
+    @JsonIgnore
+    private String submittedByEmail;
     private Boolean anonymous = false;
 
     public Complaint() {
@@ -81,6 +85,9 @@ public class Complaint {
     public void setSubmittedBy(String submittedBy) {
         this.submittedBy = submittedBy;
     }
+
+    public String getSubmittedByEmail() { return submittedByEmail; }
+    public void setSubmittedByEmail(String submittedByEmail) { this.submittedByEmail = submittedByEmail; }
 
     public Boolean getAnonymous() {
         return anonymous;

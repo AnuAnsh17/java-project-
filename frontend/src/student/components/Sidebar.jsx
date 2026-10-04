@@ -24,16 +24,10 @@ export const StudentSidebar = ({ mobileOpen, onCloseMobile }) => {
     { to: "/student/feed", label: "Campus Feed", icon: MessageSquare },
     { to: "/student/forums", label: "Category Forums", icon: Compass },
     { to: "/student/clubs", label: "Student Clubs", icon: Users },
-    { to: "/student/committees", label: "Committees", icon: Building2 },
     { to: "/student/events", label: "Campus Events", icon: Calendar },
     { to: "/student/notices", label: "Official Notices", icon: Bell },
-    { to: "/student/elections", label: "Campus Elections", icon: Vote },
     { to: "/student/assignments", label: "My Assignments", icon: BookOpen },
-    { to: "/student/attendance", label: "Attendance", icon: UserCheck },
-    { to: "/student/teams", label: "Academic Teams", icon: GraduationCap },
     { to: "/student/complaints", label: "Complaints Portal", icon: ShieldAlert },
-    { to: "/student/organizations", label: "My Organizations", icon: Briefcase },
-    { to: "/student/activity", label: "My Activity", icon: Activity },
     { to: "/student/profile", label: "Student Profile", icon: User }
   ];
 

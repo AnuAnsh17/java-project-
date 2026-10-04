@@ -1,99 +1,52 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ArrowRight, BookOpenCheck, Megaphone } from 'lucide-react';
 import { useFaculty } from '../hooks/useFaculty';
-import { classService } from '../services/classService';
 import { assignmentService } from '../services/assignmentService';
-import { submissionService } from '../services/submissionService';
-import { teamService } from '../services/teamService';
-import { ClassCard } from '../components/ClassCard';
+import { facultyAnnouncementService } from '../services/facultyAnnouncementService';
 import { AssignmentCardFaculty } from '../components/AssignmentCard';
-import { PlusCircle, UserCheck, FileCheck, GraduationCap, Bell } from 'lucide-react';
+import { apiErrorMessage } from '../../services/api';
 
 export const FacultyDashboard = () => {
   const { facultyProfile } = useFaculty();
   const navigate = useNavigate();
-  const [classes, setClasses] = useState([]);
-  const [assignments, setAssignments] = useState([]);
-  const [submissions, setSubmissions] = useState([]);
-  const [teams, setTeams] = useState([]);
+  const [data, setData] = useState({ assignments: [], notices: [] });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    async function load() {
-      const cls = await classService.getClasses();
-      const asgns = await assignmentService.getAssignments();
-      const subs = await submissionService.getSubmissions();
-      const t = await teamService.getTeams();
-      setClasses(cls);
-      setAssignments(asgns);
-      setSubmissions(subs);
-      setTeams(t);
-    }
-    load();
+    Promise.all([assignmentService.getAssignments(), facultyAnnouncementService.getAnnouncements()])
+      .then(([assignments, notices]) => setData({ assignments: assignments.slice(0, 3), notices: notices.slice(0, 3) }))
+      .catch((requestError) => setError(apiErrorMessage(requestError, 'Faculty workspace could not be loaded.')))
+      .finally(() => setLoading(false));
   }, []);
 
   return (
     <div>
-      <div className="student-card" style={{ background: 'linear-gradient(135deg, #0284c7, #0369a1)', color: 'white', marginBottom: '2rem' }}>
-        <h1 style={{ color: 'white', fontSize: '1.8rem', marginBottom: '0.4rem' }}>
-          Welcome back, {facultyProfile?.name || "Faculty Member"} 👋
-        </h1>
-        <p style={{ color: '#e0f2fe', fontSize: '0.95rem' }}>
-          {facultyProfile?.department} • {facultyProfile?.designation}
-        </p>
+      <section className="student-card" style={{ background: 'linear-gradient(135deg, #0369a1, #0f172a)', color: 'white', marginBottom: '1.5rem' }}>
+        <h1 style={{ color: 'white', fontSize: '1.8rem', marginBottom: '0.35rem' }}>Welcome, {facultyProfile?.name || 'Faculty member'}</h1>
+        <p style={{ color: '#cbd5e1', margin: 0 }}>{facultyProfile?.department || 'Faculty workspace'} · Campus Connect</p>
+      </section>
+      <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
+        <button className="btn btn-primary" onClick={() => navigate('/faculty/assignments/create')}>Create assignment</button>
+        <button className="btn btn-outline" onClick={() => navigate('/faculty/announcements')}>Post announcement</button>
       </div>
-
-      <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '2rem' }}>
-        <button className="btn btn-primary" onClick={() => navigate('/faculty/assignments/create')}>
-          <PlusCircle size={18} /> Create Assignment
-        </button>
-        <button className="btn btn-outline" onClick={() => navigate('/faculty/attendance/take')}>
-          <UserCheck size={18} /> Take Attendance
-        </button>
-        <button className="btn btn-outline" onClick={() => navigate('/faculty/teams/create')}>
-          <GraduationCap size={18} /> Create Academic Team
-        </button>
-        <button className="btn btn-outline" onClick={() => navigate('/faculty/announcements')}>
-          <Bell size={18} /> Post Announcement
-        </button>
-      </div>
-
-      <div className="grid-3" style={{ marginBottom: '2rem' }}>
-        <div className="student-card" style={{ cursor: 'pointer' }} onClick={() => navigate('/faculty/classes')}>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Assigned Classes</div>
-          <div style={{ fontSize: '2rem', fontWeight: '800', color: 'var(--primary-light)', margin: '0.2rem 0' }}>{classes.length}</div>
-          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Active course workloads</div>
-        </div>
-
-        <div className="student-card" style={{ cursor: 'pointer' }} onClick={() => navigate('/faculty/submissions')}>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Pending Submissions</div>
-          <div style={{ fontSize: '2rem', fontWeight: '800', color: 'var(--warning)', margin: '0.2rem 0' }}>
-            {submissions.filter(s => s.status === 'Submitted').length}
-          </div>
-          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Requires grading & feedback</div>
-        </div>
-
-        <div className="student-card" style={{ cursor: 'pointer' }} onClick={() => navigate('/faculty/teams')}>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Academic Teams</div>
-          <div style={{ fontSize: '2rem', fontWeight: '800', color: 'var(--success)', margin: '0.2rem 0' }}>{teams.length}</div>
-          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Faculty-managed groups</div>
-        </div>
-      </div>
-
-      <div className="grid-2">
-        <div>
-          <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--primary-dark)' }}>My Assigned Classes</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            {classes.map(c => <ClassCard key={c.id} classItem={c} />)}
-          </div>
-        </div>
-
-        <div>
-          <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--primary-dark)' }}>Recent Course Assignments</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            {assignments.map(a => <AssignmentCardFaculty key={a.id} assignment={a} />)}
-          </div>
-        </div>
-      </div>
+      {loading && <div className="student-card" role="status">Loading your classes and updates…</div>}
+      {error && <div className="student-card" role="alert">{error}</div>}
+      {!loading && !error && <div className="grid-2">
+        <section>
+          <div className="student-section-heading"><h2><BookOpenCheck size={18} /> Assignments</h2><button className="btn btn-outline" onClick={() => navigate('/faculty/assignments')}>See all <ArrowRight size={14} /></button></div>
+          {data.assignments.map((item) => <AssignmentCardFaculty key={item.id} assignment={item} />)}
+          {!data.assignments.length && <div className="student-card">No assignments have been published.</div>}
+        </section>
+        <section>
+          <div className="student-section-heading"><h2><Megaphone size={18} /> Notices</h2><button className="btn btn-outline" onClick={() => navigate('/faculty/announcements')}>See all</button></div>
+          {data.notices.map((notice) => <div className="student-card" key={notice.id}>
+            <span className="badge badge-trust">{notice.target}</span><h3>{notice.title}</h3><p>{notice.message}</p>
+          </div>)}
+          {!data.notices.length && <div className="student-card">No notices have been published.</div>}
+        </section>
+      </div>}
     </div>
   );
 };

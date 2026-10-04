@@ -1,8 +1,13 @@
 import api from '../../services/api';
-import { mockNoticesData } from '../mock/mockNotices';
 
 export const noticeService = {
   async getNotices() {
-    return Promise.resolve(mockNoticesData);
+    const response = await api.get('/notices');
+    return response.data.map((notice) => ({
+      ...notice,
+      issuingAuthority: notice.author || 'Campus Connect',
+      date: notice.publishedAt,
+      isImportant: /exam|urgent|deadline/i.test(`${notice.title} ${notice.category}`)
+    }));
   }
 };

@@ -8,23 +8,26 @@ export const ManageStudents = () => {
   const [search, setSearch] = useState('');
   const [selectedBranch, setSelectedBranch] = useState('All');
   const [selectedDetail, setSelectedDetail] = useState(null);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     async function load() {
-      const data = await studentManagementService.getStudents();
-      setStudents(data);
+      try { setStudents(await studentManagementService.getStudents()); }
+      catch (requestError) { setError(requestError.response?.data?.detail || 'Student records could not be loaded.'); }
     }
     load();
   }, []);
 
-  const handleToggleStatus = async (id) => {
-    const updated = await studentManagementService.toggleStatus(id);
-    setStudents(updated);
+  const handleDelete = async (id) => {
+    try {
+      await studentManagementService.deleteStudent(id);
+      setStudents((items) => items.filter((student) => student.id !== id));
+    } catch (requestError) { setError(requestError.response?.data?.detail || 'Student could not be deleted.'); }
   };
 
   const filtered = students.filter(s => {
-    const matchesSearch = s.name.toLowerCase().includes(search.toLowerCase()) || s.email.toLowerCase().includes(search.toLowerCase()) || s.rollNo.toLowerCase().includes(search.toLowerCase());
-    const matchesBranch = selectedBranch === 'All' || s.branch === selectedBranch;
+    const matchesSearch = s.name.toLowerCase().includes(search.toLowerCase()) || s.email.toLowerCase().includes(search.toLowerCase());
+    const matchesBranch = selectedBranch === 'All' || s.department === selectedBranch;
     return matchesSearch && matchesBranch;
   });
 
@@ -57,17 +60,16 @@ export const ManageStudents = () => {
         </select>
       </div>
 
-      <StudentTable students={filtered} onToggleStatus={handleToggleStatus} onViewDetail={(std) => setSelectedDetail(std)} />
+      {error && <div className="student-card" role="alert">{error}</div>}
+      <StudentTable students={filtered} onDelete={handleDelete} onViewDetail={(std) => setSelectedDetail(std)} />
 
       {selectedDetail && (
         <div className="modal-overlay">
           <div className="modal-content-box">
             <h3>Student Details: {selectedDetail.name}</h3>
             <p><strong>Email:</strong> {selectedDetail.email}</p>
-            <p><strong>Roll No:</strong> {selectedDetail.rollNo}</p>
-            <p><strong>Branch & Year:</strong> {selectedDetail.branch} ({selectedDetail.year} - Div {selectedDetail.division})</p>
-            <p><strong>Organizations:</strong> {selectedDetail.organizations.join(', ') || 'None'}</p>
-            <p><strong>Status:</strong> {selectedDetail.status}</p>
+            <p><strong>Department & Year:</strong> {selectedDetail.department || '—'} ({selectedDetail.year || '—'} - Div {selectedDetail.division || '—'})</p>
+            <p><strong>Bio:</strong> {selectedDetail.bio || 'No profile bio has been added.'}</p>
 
             <div style={{ marginTop: '1.5rem', textAlign: 'right' }}>
               <button className="btn btn-outline" onClick={() => setSelectedDetail(null)}>Close</button>

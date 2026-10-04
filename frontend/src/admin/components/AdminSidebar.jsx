@@ -5,10 +5,8 @@ import {
   Users,
   GraduationCap,
   Briefcase,
-  Building2,
   Calendar,
   Bell,
-  Vote,
   ShieldAlert,
   UserCheck,
   User,
@@ -21,12 +19,8 @@ export const AdminSidebar = ({ mobileOpen, onCloseMobile }) => {
     { to: "/admin/students", label: "Manage Students", icon: Users },
     { to: "/admin/faculty", label: "Manage Faculty", icon: GraduationCap },
     { to: "/admin/clubs", label: "Manage Clubs", icon: Briefcase },
-    { to: "/admin/committees", label: "Manage Committees", icon: Building2 },
-    { to: "/admin/organizations", label: "Organizations Overview", icon: Building2 },
-    { to: "/admin/appointments", label: "Appointments & Roles", icon: UserCheck },
     { to: "/admin/events", label: "Event Management", icon: Calendar },
     { to: "/admin/notices", label: "Official Notices", icon: Bell },
-    { to: "/admin/elections", label: "Election Management", icon: Vote },
     { to: "/admin/reports", label: "Reports & Complaints", icon: ShieldAlert },
     { to: "/admin/profile", label: "Admin Profile", icon: User }
   ];

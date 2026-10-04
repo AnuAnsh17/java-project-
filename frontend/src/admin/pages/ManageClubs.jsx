@@ -11,8 +11,7 @@ export const ManageClubs = () => {
 
   useEffect(() => {
     async function load() {
-      const c = await clubManagementService.getClubs();
-      setClubs(c);
+      setClubs(await clubManagementService.getClubs());
     }
     load();
   }, []);
@@ -28,9 +27,9 @@ export const ManageClubs = () => {
     setShowModal(false);
   };
 
-  const handleToggleStatus = async (id) => {
-    const updated = await clubManagementService.toggleStatus(id);
-    setClubs(updated);
+  const handleDelete = async (id) => {
+    await clubManagementService.deleteClub(id);
+    setClubs((items) => items.filter((club) => club.id !== id));
   };
 
   return (
@@ -51,18 +50,18 @@ export const ManageClubs = () => {
           <div key={club.id} className="student-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
               <span className="badge badge-trust">{club.category}</span>
-              <span className={`status-badge ${club.status === 'Active' ? 'status-active' : 'status-suspended'}`}>{club.status}</span>
+              <span className="status-badge status-published">{club.status}</span>
             </div>
             <h3 style={{ fontSize: '1.2rem', color: 'var(--primary-dark)', marginBottom: '0.4rem' }}>{club.name}</h3>
             <p style={{ fontSize: '0.85rem', color: 'var(--primary-light)', fontWeight: '600', marginBottom: '0.85rem' }}>Leadership: {club.leader}</p>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>Members: {club.membersCount} • Created: {club.createdDate}</div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>Members: {club.membersCount} members</div>
 
             <button
               className="btn btn-outline"
               style={{ width: '100%', fontSize: '0.82rem', color: club.status === 'Active' ? 'var(--error)' : 'var(--success)' }}
-              onClick={() => handleToggleStatus(club.id)}
+              onClick={() => handleDelete(club.id)}
             >
-              {club.status === 'Active' ? 'Deactivate Club' : 'Activate Club'}
+              Delete club
             </button>
           </div>
         ))}

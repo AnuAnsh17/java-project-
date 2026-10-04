@@ -2,6 +2,8 @@ package com.controller;
 
 import com.entity.Assignment;
 import com.service.AssignmentService;
+import com.repository.StudentRepository;
+import org.springframework.security.core.Authentication;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +16,11 @@ import java.util.List;
 public class AssignmentController {
 
     private final AssignmentService assignmentService;
+    private final StudentRepository studentRepository;
 
-    public AssignmentController(AssignmentService assignmentService) {
+    public AssignmentController(AssignmentService assignmentService, StudentRepository studentRepository) {
         this.assignmentService = assignmentService;
+        this.studentRepository = studentRepository;
     }
 
     @GetMapping
@@ -34,7 +38,9 @@ public class AssignmentController {
     }
 
     @PostMapping
-    public ResponseEntity<Assignment> createAssignment(@Valid @RequestBody Assignment assignment) {
+    public ResponseEntity<Assignment> createAssignment(@Valid @RequestBody Assignment assignment, Authentication authentication) {
+        assignment.setFacultyName(studentRepository.findByEmailIgnoreCase(authentication.getName())
+                .map(student -> student.getName()).orElse(authentication.getName()));
         Assignment created = assignmentService.createAssignment(assignment);
         return ResponseEntity
                 .created(URI.create("/api/assignments/" + created.getId()))

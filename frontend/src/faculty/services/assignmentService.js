@@ -1,32 +1,37 @@
 import api from '../../services/api';
-import { mockAssignmentsFaculty } from '../mock/mockAssignments';
 
-let assignmentsStore = [...mockAssignmentsFaculty];
+const mapAssignment = (item) => ({
+  ...item,
+  deadline: item.dueDate,
+  instructions: item.description,
+  targetClass: 'Campus students',
+  status: item.status || 'PENDING',
+  totalMarks: item.totalMarks || 20,
+  submissionsCount: 0
+});
 
 export const assignmentService = {
   async getAssignments() {
-    return Promise.resolve(assignmentsStore);
+    const response = await api.get('/assignments');
+    return response.data.map(mapAssignment);
   },
-
   async getAssignmentById(id) {
-    const asgn = assignmentsStore.find(a => a.id === id);
-    return Promise.resolve(asgn || null);
+    const response = await api.get(`/assignments/${id}`);
+    return mapAssignment(response.data);
   },
-
   async createAssignment(data) {
-    const newAsgn = {
-      id: `asgn-${Date.now()}`,
+    const response = await api.post('/assignments', {
       title: data.title,
-      subject: data.subject || "Java Programming (IT302)",
-      targetClass: data.targetClass || "SE IT Division A",
-      deadline: data.deadline,
-      totalMarks: Number(data.totalMarks) || 20,
-      submissionsCount: 0,
-      totalStudents: 65,
-      status: "Active",
-      instructions: data.instructions
-    };
-    assignmentsStore.unshift(newAsgn);
-    return Promise.resolve(newAsgn);
-  }
+      subject: data.subject,
+      dueDate: data.deadline,
+      description: data.instructions,
+      status: 'PENDING'
+    });
+    return mapAssignment(response.data);
+  },
+  async updateAssignment(id, data) {
+    const response = await api.put(`/assignments/${id}`, data);
+    return mapAssignment(response.data);
+  },
+  async deleteAssignment(id) { await api.delete(`/assignments/${id}`); }
 };

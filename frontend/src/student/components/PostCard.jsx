@@ -1,33 +1,65 @@
 import React, { useState } from 'react';
-import { MessageSquare, Share2, ShieldAlert } from 'lucide-react';
+import { MessageSquare, Pencil, Trash2, X, Check } from 'lucide-react';
 import { VoteButton } from './VoteButton';
 import { CommentSection } from './CommentSection';
 import { postService } from '../services/postService';
+import { apiErrorMessage } from '../../services/api';
+import { useAuth } from '../../auth/hooks/useAuth';
 
-export const PostCard = ({ post }) => {
+export const PostCard = ({ post, onDelete }) => {
+  const { user } = useAuth();
   const [currentPost, setCurrentPost] = useState(post);
   const [showComments, setShowComments] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [title, setTitle] = useState(post.title);
+  const [content, setContent] = useState(post.content);
+  const [error, setError] = useState('');
 
   const handleVote = async (dir) => {
-    const updated = await postService.votePost(currentPost.id, dir);
-    setCurrentPost(updated);
+    try {
+      const updated = await postService.votePost(currentPost.id, dir);
+      setCurrentPost({ ...updated, userVoted: dir });
+      setError('');
+    } catch (requestError) {
+      setError(apiErrorMessage(requestError));
+    }
   };
 
   const handleAddComment = async (commentText) => {
-    await postService.addComment(currentPost.id, commentText);
-    const refreshed = await postService.getPostById(currentPost.id);
-    setCurrentPost(refreshed);
+    try {
+      await postService.addComment(currentPost.id, commentText);
+      const refreshed = await postService.getPostById(currentPost.id);
+      setCurrentPost(refreshed);
+      setError('');
+    } catch (requestError) {
+      setError(apiErrorMessage(requestError));
+    }
   };
+
+  const handleUpdate = async (event) => {
+    event.preventDefault();
+    try {
+      setCurrentPost(await postService.updatePost(currentPost.id, { title, content, category: currentPost.category }));
+      setEditing(false);
+      setError('');
+    } catch (requestError) { setError(apiErrorMessage(requestError)); }
+  };
+
+  const handleDelete = async () => {
+    try {
+      await postService.deletePost(currentPost.id);
+      onDelete?.(currentPost.id);
+    } catch (requestError) { setError(apiErrorMessage(requestError)); }
+  };
+  const canManage = user?.role === 'ADMIN' || currentPost.authorName === user?.name;
 
   return (
     <div className="student-card student-card-hover" style={{ marginBottom: '1.25rem', overflow: 'hidden', minWidth: 0, wordBreak: 'break-word' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <img
-            src={currentPost.authorAvatar}
-            alt={currentPost.authorName}
-            style={{ width: '38px', height: '38px', borderRadius: '50%', objectFit: 'cover' }}
-          />
+          <div aria-hidden="true" style={{ width: '38px', height: '38px', borderRadius: '50%', display: 'grid', placeItems: 'center', background: '#dbeafe', color: '#1d4ed8', fontWeight: 700 }}>
+            {(currentPost.authorName || 'C').slice(0, 1).toUpperCase()}
+          </div>
           <div>
             <div style={{ fontWeight: '600', fontSize: '0.92rem' }}>{currentPost.authorName}</div>
             <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{currentPost.authorRole} • {currentPost.timeAgo}</div>
@@ -38,13 +70,26 @@ export const PostCard = ({ post }) => {
         </span>
       </div>
 
-      <h3 style={{ fontSize: '1.15rem', marginBottom: '0.5rem', color: 'var(--primary-dark)' }}>{currentPost.title}</h3>
-      <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', marginBottom: '1rem', lineHeight: '1.5' }}>{currentPost.content}</p>
+      {error && <p role="alert" className="validation-error">{error}</p>}
+
+      {editing ? <form onSubmit={handleUpdate}>
+        <input className="form-input" value={title} onChange={(event) => setTitle(event.target.value)} required />
+        <textarea className="form-input" rows={4} value={content} onChange={(event) => setContent(event.target.value)} required />
+        <button className="btn btn-primary" type="submit"><Check size={15} /> Save</button>
+        <button className="btn btn-outline" type="button" onClick={() => setEditing(false)}><X size={15} /> Cancel</button>
+      </form> : <>
+        <h3 style={{ fontSize: '1.15rem', marginBottom: '0.5rem', color: 'var(--primary-dark)' }}>{currentPost.title}</h3>
+        <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', marginBottom: '1rem', lineHeight: '1.5' }}>{currentPost.content}</p>
+      </>}
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid var(--border-light)', paddingTop: '0.75rem' }}>
         <VoteButton votes={currentPost.votes} userVoted={currentPost.userVoted} onVote={handleVote} />
 
         <div style={{ display: 'flex', gap: '1rem' }}>
+          {canManage && <>
+            <button onClick={() => { setEditing(true); setTitle(currentPost.title); setContent(currentPost.content); }} aria-label="Edit post"><Pencil size={16} /></button>
+            <button onClick={handleDelete} aria-label="Delete post"><Trash2 size={16} /></button>
+          </>}
           <button
             onClick={() => setShowComments(!showComments)}
             style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.88rem', color: 'var(--text-secondary)' }}

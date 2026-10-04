@@ -6,6 +6,7 @@ export const ManageNotices = () => {
   const [notices, setNotices] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
   const [authority, setAuthority] = useState('College Administration');
   const [audience, setAudience] = useState('All Students');
   const [priority, setPriority] = useState('Important');
@@ -21,10 +22,11 @@ export const ManageNotices = () => {
   const handleCreate = async (e) => {
     e.preventDefault();
     if (!title) return;
-    await noticeManagementService.createNotice({ title, issuingAuthority: authority, audience, priority });
+    await noticeManagementService.createNotice({ title, content, issuingAuthority: authority, audience, priority });
     const updated = await noticeManagementService.getNotices();
     setNotices(updated);
     setTitle('');
+    setContent('');
     setShowModal(false);
   };
 
@@ -89,6 +91,10 @@ export const ManageNotices = () => {
               <div className="form-group">
                 <label className="form-label">Notice Title</label>
                 <input type="text" className="form-input" placeholder="e.g. End Semester Exam Timetable Autumn 2026" value={title} onChange={(e) => setTitle(e.target.value)} required />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Notice details</label>
+                <textarea className="form-input" rows={4} value={content} onChange={(e) => setContent(e.target.value)} required />
               </div>
               <div className="form-group">
                 <label className="form-label">Issuing Authority</label>

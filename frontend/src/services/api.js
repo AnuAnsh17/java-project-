@@ -2,6 +2,7 @@ import axios from 'axios';
 
 // Centralized Axios instance configured for Spring Boot REST API integration
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
+export const TOKEN_KEY = 'campus_connect_token';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -12,10 +13,10 @@ const api = axios.create({
   }
 });
 
-// Request Interceptor: Attach authorization headers when JWT token is present in security context
 api.interceptors.request.use(
   (config) => {
-    // Placeholder for authorization token attachment when backend Spring Security is connected
+    const token = window.localStorage.getItem(TOKEN_KEY);
+    if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
   },
   (error) => {
@@ -23,13 +24,28 @@ api.interceptors.request.use(
   }
 );
 
-// Response Interceptor: Standard error handling & security response interception
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Intercept 401/403 security errors when real authentication API is live
+    if (error.response?.status === 401 && window.localStorage.getItem(TOKEN_KEY)) {
+      window.localStorage.removeItem(TOKEN_KEY);
+      window.localStorage.removeItem('campus_connect_user');
+      window.dispatchEvent(new Event('campus-connect:unauthorized'));
+    }
     return Promise.reject(error);
   }
 );
+
+export function apiErrorMessage(error, fallback = 'The request could not be completed. Please try again.') {
+  const status = error.response?.status;
+  const serverMessage = error.response?.data?.message || error.response?.data?.detail;
+  if (!error.response) return 'Unable to reach Campus Connect. Check that the API is running and try again.';
+  if (status === 400 || status === 422) return serverMessage || 'Some information is invalid. Check the form and try again.';
+  if (status === 401) return serverMessage || 'Your session has expired. Please sign in again.';
+  if (status === 403) return 'You do not have permission to do that.';
+  if (status === 404) return 'That item could not be found.';
+  if (status === 409) return serverMessage || 'An account with that email already exists.';
+  return serverMessage || fallback;
+}
 
 export default api;

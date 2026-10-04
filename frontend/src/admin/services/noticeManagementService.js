@@ -1,30 +1,30 @@
 import api from '../../services/api';
-import { mockNoticesAdmin } from '../mock/mockNotices';
 
-let noticesStore = [...mockNoticesAdmin];
+const mapNotice = (notice) => ({
+  ...notice,
+  issuingAuthority: notice.author || 'Campus Connect',
+  audience: 'Campus community',
+  priority: notice.category || 'General',
+  publishDate: notice.publishedAt,
+  status: 'Published'
+});
 
 export const noticeManagementService = {
   async getNotices() {
-    return Promise.resolve(noticesStore);
+    const response = await api.get('/notices');
+    return response.data.map(mapNotice);
   },
-
   async createNotice(data) {
-    const newNotice = {
-      id: `notice-${Date.now()}`,
+    const response = await api.post('/notices', {
       title: data.title,
-      issuingAuthority: data.issuingAuthority || "College Administration",
-      audience: data.audience || "All Students",
-      priority: data.priority || "Normal",
-      publishDate: new Date().toLocaleDateString(),
-      status: "Published",
-      attachment: data.attachment || null
-    };
-    noticesStore.unshift(newNotice);
-    return Promise.resolve(newNotice);
+      content: data.content,
+      category: data.priority,
+      publishedAt: new Date().toISOString().slice(0, 10)
+    });
+    return mapNotice(response.data);
   },
-
   async archiveNotice(id) {
-    noticesStore = noticesStore.map(n => n.id === id ? { ...n, status: "Archived" } : n);
-    return Promise.resolve(noticesStore);
+    await api.delete(`/notices/${id}`);
+    return this.getNotices();
   }
 };

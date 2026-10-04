@@ -3,9 +3,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Menu, LogOut, Briefcase, User } from 'lucide-react';
 import { CollegeLogo, CampusConnectLogo } from '../../components/common/PlaceholderLogo';
 import { useFaculty } from '../hooks/useFaculty';
+import { useAuth } from '../../auth/hooks/useAuth';
 
 export const FacultyNavbar = ({ onToggleSidebar }) => {
   const { facultyProfile } = useFaculty();
+  const { logout } = useAuth();
   const navigate = useNavigate();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
@@ -46,7 +48,7 @@ export const FacultyNavbar = ({ onToggleSidebar }) => {
             </div>
             <div
               className="notif-item"
-              onClick={() => { setShowProfileMenu(false); navigate('/login'); }}
+              onClick={() => { setShowProfileMenu(false); logout(); navigate('/login', { replace: true }); }}
               style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.88rem', color: '#f87171' }}
             >
               <LogOut size={16} /> Logout Session

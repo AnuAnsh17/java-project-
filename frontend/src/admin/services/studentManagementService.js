@@ -1,20 +1,17 @@
 import api from '../../services/api';
-import { mockStudentsAdmin } from '../mock/mockStudents';
 
-let studentsStore = [...mockStudentsAdmin];
+const mapStudent = (student) => ({
+  ...student,
+  rollNo: '—',
+  branch: student.department || '—',
+  organizations: [],
+  status: 'Registered'
+});
 
 export const studentManagementService = {
   async getStudents() {
-    return Promise.resolve(studentsStore);
+    const response = await api.get('/students');
+    return response.data.filter((student) => student.role === 'STUDENT').map(mapStudent);
   },
-
-  async toggleStatus(id) {
-    studentsStore = studentsStore.map(s => {
-      if (s.id === id) {
-        return { ...s, status: s.status === 'Active' ? 'Suspended' : 'Active' };
-      }
-      return s;
-    });
-    return Promise.resolve(studentsStore);
-  }
+  async deleteStudent(id) { await api.delete(`/students/${id}`); }
 };

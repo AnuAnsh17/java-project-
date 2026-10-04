@@ -1,23 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { eventService } from '../services/eventService';
 import { EventCard } from '../components/EventCard';
+import { apiErrorMessage } from '../../services/api';
 
 export const Events = () => {
   const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     async function load() {
-      const evts = await eventService.getEvents();
-      setEvents(evts);
+      try {
+        setEvents(await eventService.getEvents());
+      } catch (requestError) {
+        setError(apiErrorMessage(requestError, 'Events could not be loaded.'));
+      } finally {
+        setLoading(false);
+      }
     }
     load();
   }, []);
-
-  const handleRegister = async (eventId) => {
-    await eventService.registerEvent(eventId);
-    const updated = await eventService.getEvents();
-    setEvents(updated);
-  };
 
   return (
     <div>
@@ -28,8 +30,11 @@ export const Events = () => {
         </div>
       </div>
 
+      {loading && <div className="student-card" role="status">Loading events…</div>}
+      {error && <div className="student-card" role="alert">{error}</div>}
+      {!loading && !error && events.length === 0 && <div className="student-card">No campus events have been published yet.</div>}
       <div className="grid-3">
-        {events.map(ev => <EventCard key={ev.id} event={ev} onRegister={handleRegister} />)}
+        {events.map(ev => <EventCard key={ev.id} event={ev} />)}
       </div>
     </div>
   );

@@ -1,86 +1,75 @@
 import api from '../../services/api';
-import { mockPostsData, mockCategories } from '../mock/mockPosts';
 
-let postsStore = [...mockPostsData];
+export const postCategories = ['General', 'Academics', 'Placements', 'Campus Life', 'Events', 'Technology', 'First Year'];
+
+function timeAgo(value) {
+  if (!value) return 'Recently';
+  const parsed = new Date(value.replace(' ', 'T'));
+  if (Number.isNaN(parsed.getTime())) return value;
+  const minutes = Math.max(0, Math.floor((Date.now() - parsed.getTime()) / 60000));
+  if (minutes < 60) return `${minutes}m ago`;
+  if (minutes < 1440) return `${Math.floor(minutes / 60)}h ago`;
+  return `${Math.floor(minutes / 1440)}d ago`;
+}
+
+function mapComment(comment) {
+  return { ...comment, timeAgo: timeAgo(comment.createdAt), authorRole: 'Campus member' };
+}
+
+function mapPost(post, comments = []) {
+  return {
+    ...post,
+    timeAgo: timeAgo(post.createdAt),
+    authorRole: 'Campus member',
+    authorAvatar: null,
+    votes: post.voteCount || 0,
+    userVoted: 0,
+    comments: comments.map(mapComment),
+    commentsCount: comments.length
+  };
+}
 
 export const postService = {
-  async getCategories() {
-    return Promise.resolve(mockCategories);
-  },
+  async getCategories() { return postCategories; },
 
-  async getPosts(categoryFilter = "All") {
-    if (categoryFilter === "All") {
-      return Promise.resolve(postsStore);
-    }
-    return Promise.resolve(postsStore.filter(p => p.category === categoryFilter));
+  async getPosts(categoryFilter = 'All') {
+    const response = await api.get('/posts');
+    const records = categoryFilter === 'All'
+      ? response.data
+      : response.data.filter((post) => post.category === categoryFilter);
+    return Promise.all(records.map(async (post) => {
+      const comments = await api.get('/comments', { params: { postId: post.id } }).then((result) => result.data).catch(() => []);
+      return mapPost(post, comments);
+    }));
   },
 
   async getPostById(id) {
-    const post = postsStore.find(p => p.id === id);
-    return Promise.resolve(post || null);
+    const [post, comments] = await Promise.all([
+      api.get(`/posts/${id}`),
+      api.get('/comments', { params: { postId: id } })
+    ]);
+    return mapPost(post.data, comments.data);
   },
 
   async createPost(postData) {
-    const newPost = {
-      id: `post-${Date.now()}`,
-      authorName: "Ansh Sharma",
-      authorRole: "SE IT Student",
-      authorAvatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
-      timeAgo: "Just now",
-      category: postData.category || "General",
-      title: postData.title,
-      content: postData.content,
-      votes: 0,
-      userVoted: 0,
-      commentsCount: 0,
-      comments: []
-    };
-    postsStore.unshift(newPost);
-    return Promise.resolve(newPost);
+    const response = await api.post('/posts', postData);
+    return mapPost(response.data);
   },
+
+  async updatePost(id, data) {
+    const response = await api.put(`/posts/${id}`, data);
+    return mapPost(response.data);
+  },
+
+  async deletePost(id) { await api.delete(`/posts/${id}`); },
 
   async votePost(id, direction) {
-    postsStore = postsStore.map(p => {
-      if (p.id === id) {
-        const currentVote = p.userVoted;
-        let newVote = direction;
-        let newVotesCount = p.votes;
-
-        if (currentVote === direction) {
-          // Toggle off
-          newVote = 0;
-          newVotesCount -= direction;
-        } else {
-          newVotesCount += (direction - currentVote);
-        }
-
-        return { ...p, votes: newVotesCount, userVoted: newVote };
-      }
-      return p;
-    });
-    return Promise.resolve(postsStore.find(p => p.id === id));
+    const response = await api.post(`/posts/${id}/vote`, null, { params: { delta: direction } });
+    return mapPost(response.data);
   },
 
-  async addComment(postId, commentText) {
-    const newComment = {
-      id: `c-${Date.now()}`,
-      authorName: "Ansh Sharma",
-      authorRole: "SE IT Student",
-      timeAgo: "Just now",
-      content: commentText
-    };
-
-    postsStore = postsStore.map(p => {
-      if (p.id === postId) {
-        const updatedComments = [...p.comments, newComment];
-        return {
-          ...p,
-          comments: updatedComments,
-          commentsCount: updatedComments.length
-        };
-      }
-      return p;
-    });
-    return Promise.resolve(newComment);
+  async addComment(postId, content) {
+    const response = await api.post('/comments', { postId, content });
+    return mapComment(response.data);
   }
 };

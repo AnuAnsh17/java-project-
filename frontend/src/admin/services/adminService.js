@@ -1,25 +1,18 @@
 import api from '../../services/api';
 
 export const adminService = {
-  async getProfile() {
-    return Promise.resolve({
-      name: "Dean of Student Affairs",
-      email: "admin@tsdcem.ac.in",
-      role: "College Administrator",
-      unit: "Office of Student Governance & Administration",
-      status: "Active"
-    });
-  },
-
   async getDashboardMetrics() {
-    return Promise.resolve({
-      totalStudents: 1250,
-      totalFaculty: 85,
-      activeClubs: 12,
-      activeCommittees: 6,
-      upcomingEvents: 8,
-      activeElections: 1,
-      pendingReports: 2
-    });
+    const [students, clubs, events, elections, complaints] = await Promise.all([
+      api.get('/students'), api.get('/clubs'), api.get('/events'), api.get('/elections'), api.get('/complaints')
+    ]);
+    return {
+      totalStudents: students.data.length,
+      totalFaculty: students.data.filter((item) => item.role === 'FACULTY').length,
+      activeClubs: clubs.data.length,
+      activeCommittees: 0,
+      upcomingEvents: events.data.length,
+      activeElections: elections.data.filter((item) => item.status === 'ACTIVE').length,
+      pendingReports: complaints.data.filter((item) => item.status === 'PENDING').length
+    };
   }
 };

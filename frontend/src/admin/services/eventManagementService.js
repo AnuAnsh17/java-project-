@@ -1,30 +1,22 @@
 import api from '../../services/api';
-import { mockEventsAdmin } from '../mock/mockEvents';
 
-let eventsStore = [...mockEventsAdmin];
+const mapEvent = (event) => ({ ...event, venue: event.location, registrationsCount: null, status: 'Published' });
 
 export const eventManagementService = {
   async getEvents() {
-    return Promise.resolve(eventsStore);
+    const response = await api.get('/events');
+    return response.data.map(mapEvent);
   },
-
   async createEvent(data) {
-    const newEv = {
-      id: `evt-${Date.now()}`,
+    const response = await api.post('/events', {
       title: data.title,
-      organizer: data.organizer || "College Administration",
+      organizer: data.organizer,
       date: data.date,
-      time: data.time || "10:00 AM",
-      venue: data.venue,
-      registrationsCount: 0,
-      status: "Published"
-    };
-    eventsStore.unshift(newEv);
-    return Promise.resolve(newEv);
+      time: data.time || '10:00 AM',
+      location: data.venue,
+      category: data.category || 'Campus'
+    });
+    return mapEvent(response.data);
   },
-
-  async toggleStatus(id) {
-    eventsStore = eventsStore.map(e => e.id === id ? { ...e, status: e.status === 'Published' ? 'Cancelled' : 'Published' } : e);
-    return Promise.resolve(eventsStore);
-  }
+  async deleteEvent(id) { await api.delete(`/events/${id}`); }
 };

@@ -1,129 +1,69 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ArrowRight, CalendarDays, MessageSquareText, Megaphone } from 'lucide-react';
 import { useStudent } from '../hooks/useStudent';
 import { postService } from '../services/postService';
 import { eventService } from '../services/eventService';
-import { assignmentService } from '../services/assignmentService';
-import { attendanceService } from '../services/attendanceService';
 import { noticeService } from '../services/noticeService';
-import { electionService } from '../services/electionService';
 import { PostCard } from '../components/PostCard';
 import { EventCard } from '../components/EventCard';
 import { NoticeCard } from '../components/NoticeCard';
+import { apiErrorMessage } from '../../services/api';
 
 export const StudentDashboard = () => {
   const { profile } = useStudent();
   const navigate = useNavigate();
-  const [posts, setPosts] = useState([]);
-  const [events, setEvents] = useState([]);
-  const [assignments, setAssignments] = useState([]);
-  const [attendance, setAttendance] = useState(null);
-  const [notices, setNotices] = useState([]);
-  const [elections, setElections] = useState([]);
+  const [data, setData] = useState({ posts: [], events: [], notices: [] });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    async function loadDashboard() {
-      const p = await postService.getPosts();
-      const e = await eventService.getEvents();
-      const a = await assignmentService.getAssignments();
-      const att = await attendanceService.getAttendance();
-      const n = await noticeService.getNotices();
-      const el = await electionService.getElections();
-      setPosts(p.slice(0, 2));
-      setEvents(e.slice(0, 2));
-      setAssignments(a.slice(0, 2));
-      setAttendance(att);
-      setNotices(n.slice(0, 2));
-      setElections(el.slice(0, 1));
-    }
-    loadDashboard();
+    let active = true;
+    Promise.all([postService.getPosts(), eventService.getEvents(), noticeService.getNotices()])
+      .then(([posts, events, notices]) => {
+        if (active) setData({ posts: posts.slice(0, 2), events: events.slice(0, 2), notices: notices.slice(0, 2) });
+      })
+      .catch((requestError) => { if (active) setError(apiErrorMessage(requestError, 'Campus information could not be loaded.')); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
   }, []);
 
   return (
     <div>
-      <div className="student-card" style={{ background: 'linear-gradient(135deg, #1e3a8a, #0f172a)', color: 'white', marginBottom: '2rem' }}>
-        <h1 style={{ color: 'white', fontSize: '1.8rem', marginBottom: '0.4rem' }}>
-          Welcome back, {profile?.name || "Student"} 👋
-        </h1>
-        <p style={{ color: '#94a3b8', fontSize: '1rem', fontWeight: '500' }}>
-          Second Year IT • Div C
+      <section className="student-card" style={{ background: 'linear-gradient(135deg, #1e3a8a, #0f172a)', color: 'white', marginBottom: '1.5rem' }}>
+        <p style={{ color: '#bfdbfe', marginBottom: '0.4rem', fontWeight: 600 }}>CAMPUS CONNECT</p>
+        <h1 style={{ color: 'white', fontSize: '1.8rem', marginBottom: '0.4rem' }}>Welcome, {profile?.name || 'Student'}</h1>
+        <p style={{ color: '#cbd5e1', margin: 0 }}>
+          {[profile?.year, profile?.department, profile?.division && `Division ${profile.division}`].filter(Boolean).join(' · ') || 'Your college community, in one place.'}
         </p>
-      </div>
+      </section>
 
-      <div className="grid-3" style={{ marginBottom: '2rem' }}>
-        <div className="student-card" style={{ cursor: 'pointer' }} onClick={() => navigate('/student/attendance')}>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Overall Attendance</div>
-          <div style={{ fontSize: '2rem', fontWeight: '800', color: (attendance?.overallPercentage || 84) >= 75 ? 'var(--success)' : 'var(--error)', margin: '0.2rem 0' }}>
-            {attendance?.overallPercentage || 84.5}%
-          </div>
-          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{attendance?.totalAttended} / {attendance?.totalClassesHeld} Classes Attended</div>
-        </div>
-
-        <div className="student-card" style={{ cursor: 'pointer' }} onClick={() => navigate('/student/assignments')}>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Pending Assignments</div>
-          <div style={{ fontSize: '2rem', fontWeight: '800', color: 'var(--warning)', margin: '0.2rem 0' }}>
-            {assignments.filter(a => a.status === 'Pending').length}
-          </div>
-          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Check upcoming deadlines</div>
-        </div>
-
-        <div className="student-card" style={{ cursor: 'pointer' }} onClick={() => navigate('/student/elections')}>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Active Elections</div>
-          <div style={{ fontSize: '2rem', fontWeight: '800', color: 'var(--primary-light)', margin: '0.2rem 0' }}>
-            {elections.length}
-          </div>
-          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Cast your vote electronically</div>
-        </div>
-      </div>
-
-      {/* Responsive Two-Column Layout: Feed on Left, Events & Notices on Right */}
-      <div className="student-dashboard-main-grid">
-        {/* Left Column: Campus Discussions Feed */}
-        <section className="student-dashboard-feed-col" aria-label="Campus Discussions Feed">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-            <h2 style={{ fontSize: '1.25rem', color: 'var(--primary-dark)', margin: 0 }}>Campus Discussions Feed</h2>
-            <button
-              onClick={() => navigate('/student/feed')}
-              className="btn btn-outline"
-              style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem' }}
-            >
-              View Full Feed
-            </button>
-          </div>
-          {posts.map(p => <PostCard key={p.id} post={p} />)}
-        </section>
-
-        {/* Right Column: Upcoming Events & Notices */}
-        <section className="student-dashboard-events-col" aria-label="Upcoming Events and Notices">
-          <div style={{ marginBottom: '2rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-              <h2 style={{ fontSize: '1.25rem', color: 'var(--primary-dark)', margin: 0 }}>Upcoming Events</h2>
-              <button
-                onClick={() => navigate('/student/events')}
-                className="btn btn-outline"
-                style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem' }}
-              >
-                All Events
-              </button>
-            </div>
-            {events.map(ev => <EventCard key={ev.id} event={ev} onRegister={() => navigate('/student/events')} />)}
+      {error && <div className="student-card" role="alert" style={{ color: 'var(--error)', marginBottom: '1rem' }}>{error}</div>}
+      {loading ? <div className="student-card" role="status">Loading your campus…</div> : (
+        <>
+          <div className="grid-3" style={{ marginBottom: '1.5rem' }}>
+            <div className="student-card"><MessageSquareText color="var(--primary-light)" /><div className="dashboard-stat-value">{data.posts.length}</div><div>Recent discussions</div></div>
+            <div className="student-card"><CalendarDays color="var(--primary-light)" /><div className="dashboard-stat-value">{data.events.length}</div><div>Upcoming events</div></div>
+            <div className="student-card"><Megaphone color="var(--primary-light)" /><div className="dashboard-stat-value">{data.notices.length}</div><div>Official notices</div></div>
           </div>
 
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-              <h2 style={{ fontSize: '1.25rem', color: 'var(--primary-dark)', margin: 0 }}>Recent Official Notices</h2>
-              <button
-                onClick={() => navigate('/student/notices')}
-                className="btn btn-outline"
-                style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem' }}
-              >
-                All Notices
-              </button>
-            </div>
-            {notices.map(n => <NoticeCard key={n.id} notice={n} />)}
+          <div className="student-dashboard-main-grid">
+            <section aria-label="Campus discussions">
+              <div className="student-section-heading"><h2>Campus discussions</h2><button className="btn btn-outline" onClick={() => navigate('/student/feed')}>Open feed <ArrowRight size={15} /></button></div>
+              {data.posts.map((post) => <PostCard key={post.id} post={post} onDelete={(id) => setData((current) => ({ ...current, posts: current.posts.filter((item) => item.id !== id) }))} />)}
+              {data.posts.length === 0 && <div className="student-card">No posts yet. <button className="text-link-button" onClick={() => navigate('/student/feed')}>Start a discussion</button></div>}
+            </section>
+            <section aria-label="Campus updates">
+              <div className="student-section-heading"><h2>Events</h2><button className="btn btn-outline" onClick={() => navigate('/student/events')}>See all</button></div>
+              {data.events.map((event) => <EventCard key={event.id} event={event} />)}
+              {!data.events.length && <div className="student-card">No events have been posted.</div>}
+              <div className="student-section-heading" style={{ marginTop: '1.5rem' }}><h2>Official notices</h2><button className="btn btn-outline" onClick={() => navigate('/student/notices')}>See all</button></div>
+              {data.notices.map((notice) => <NoticeCard key={notice.id} notice={notice} />)}
+              {!data.notices.length && <div className="student-card">No notices have been posted.</div>}
+            </section>
           </div>
-        </section>
-      </div>
+        </>
+      )}
     </div>
   );
 };

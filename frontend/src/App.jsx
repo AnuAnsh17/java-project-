@@ -3,6 +3,18 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './auth/context/AuthContext';
 import { LandingPage } from './pages/LandingPage';
 import { Login } from './auth/pages/Login';
+import { Register } from './auth/pages/Register';
+import { useAuth } from './auth/hooks/useAuth';
+
+const roleHome = { STUDENT: '/student', FACULTY: '/faculty', ADMIN: '/admin' };
+
+function ProtectedRoute({ role, children }) {
+  const { user, loading } = useAuth();
+  if (loading) return <div className="app-loading" role="status">Restoring your session…</div>;
+  if (!user) return <Navigate to="/login" replace />;
+  if (user.role !== role) return <Navigate to={roleHome[user.role] || '/'} replace />;
+  return children;
+}
 
 // Student Module Layout & Pages
 import { StudentLayout } from './student/pages/StudentLayout';
@@ -74,9 +86,10 @@ export default function App() {
           {/* Public Landing & Authentication */}
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
           {/* Student Module Routes */}
-          <Route path="/student" element={<StudentLayout />}>
+          <Route path="/student" element={<ProtectedRoute role="STUDENT"><StudentLayout /></ProtectedRoute>}>
             <Route index element={<StudentDashboard />} />
             <Route path="profile" element={<StudentProfile />} />
             <Route path="feed" element={<Feed />} />
@@ -102,7 +115,7 @@ export default function App() {
           </Route>
 
           {/* Admin Control Center Routes */}
-          <Route path="/admin" element={<AdminLayout />}>
+          <Route path="/admin" element={<ProtectedRoute role="ADMIN"><AdminLayout /></ProtectedRoute>}>
             <Route index element={<AdminDashboard />} />
             <Route path="students" element={<ManageStudents />} />
             <Route path="faculty" element={<ManageFaculty />} />
@@ -121,7 +134,7 @@ export default function App() {
           </Route>
 
           {/* Faculty Workspace Routes */}
-          <Route path="/faculty" element={<FacultyLayout />}>
+          <Route path="/faculty" element={<ProtectedRoute role="FACULTY"><FacultyLayout /></ProtectedRoute>}>
             <Route index element={<FacultyDashboard />} />
             <Route path="classes" element={<MyClasses />} />
             <Route path="classes/:id" element={<ClassDetails />} />

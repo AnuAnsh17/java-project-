@@ -1,19 +1,20 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { facultyService } from '../services/facultyService';
+import { useAuth } from '../../auth/hooks/useAuth';
 
 export const FacultyContext = createContext(null);
 
 export const FacultyProvider = ({ children }) => {
-  const [facultyProfile, setFacultyProfile] = useState(null);
+  const { user } = useAuth();
+  const [facultyProfile, setFacultyProfile] = useState(user);
   const [metrics, setMetrics] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadData() {
       try {
-        const prof = await facultyService.getProfile();
         const m = await facultyService.getDashboardMetrics();
-        setFacultyProfile(prof);
+        setFacultyProfile(user);
         setMetrics(m);
       } catch (err) {
         console.error('Error loading faculty context:', err);
@@ -22,7 +23,7 @@ export const FacultyProvider = ({ children }) => {
       }
     }
     loadData();
-  }, []);
+  }, [user]);
 
   return (
     <FacultyContext.Provider value={{ facultyProfile, metrics, loading }}>

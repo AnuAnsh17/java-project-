@@ -29,6 +29,20 @@
   max-width: 480px;
 }
 
+.auth-navbar-inner { display: flex; align-items: center; justify-content: space-between; }
+.auth-back-link, .auth-brand-lockup { display: flex; align-items: center; gap: 0.6rem; }
+.auth-form-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.65rem; }
+.auth-form-grid .form-input { padding-left: 0.75rem; }
+.auth-card .form-input { box-sizing: border-box; }
+.auth-card button:disabled { opacity: 0.65; cursor: wait; }
+
+@media (max-width: 560px) {
+  .auth-card { padding: 1.5rem; }
+  .auth-form-grid { grid-template-columns: 1fr; gap: 0; }
+  .auth-navbar-inner { gap: 0.75rem; }
+  .auth-back-link { font-size: 0.8rem; }
+}
+
 .auth-card {
   background: var(--bg-surface);
   border: 1px solid var(--border-light);

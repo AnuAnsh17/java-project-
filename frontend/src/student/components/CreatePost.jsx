@@ -1,21 +1,31 @@
 import React, { useState } from 'react';
 import { PlusCircle, X } from 'lucide-react';
-import { mockCategories } from '../mock/mockPosts';
+import { postCategories } from '../services/postService';
 
 export const CreatePostModal = ({ isOpen, onClose, onCreate }) => {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('General');
   const [content, setContent] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title || !content) return;
-    onCreate({ title, category, content });
-    setTitle('');
-    setContent('');
-    onClose();
+    setSubmitting(true);
+    setError('');
+    try {
+      await onCreate({ title, category, content });
+      setTitle('');
+      setContent('');
+      onClose();
+    } catch (requestError) {
+      setError(requestError.message || 'Your post could not be published.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -47,7 +57,7 @@ export const CreatePostModal = ({ isOpen, onClose, onCreate }) => {
               onChange={(e) => setCategory(e.target.value)}
               style={{ cursor: 'pointer' }}
             >
-              {mockCategories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+              {postCategories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
             </select>
           </div>
 
@@ -63,9 +73,10 @@ export const CreatePostModal = ({ isOpen, onClose, onCreate }) => {
             />
           </div>
 
+          {error && <p className="validation-error" role="alert">{error}</p>}
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1.5rem' }}>
             <button type="button" className="btn btn-outline" onClick={onClose}>Cancel</button>
-            <button type="submit" className="btn btn-primary">Publish Post</button>
+            <button type="submit" className="btn btn-primary" disabled={submitting}>{submitting ? 'Publishing…' : 'Publish Post'}</button>
           </div>
         </form>
       </div>

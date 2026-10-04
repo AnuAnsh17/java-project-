@@ -25,10 +25,10 @@ export const ClubDetails = () => {
       </button>
 
       <div className="student-card" style={{ marginBottom: '1.5rem', padding: '0', overflow: 'hidden' }}>
-        <img src={club.cover} alt={club.name} style={{ width: '100%', height: '160px', objectFit: 'cover' }} />
+        <div className="club-details-cover" aria-hidden="true" />
         <div style={{ padding: '1.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', marginTop: '-40px' }}>
-            <img src={club.logo} alt={club.name} style={{ width: '80px', height: '80px', borderRadius: '18px', objectFit: 'cover', border: '3px solid var(--bg-surface)' }} />
+            <div aria-hidden="true" className="club-initials club-details-initials">{club.name?.slice(0, 1).toUpperCase()}</div>
             <div>
               <h1 style={{ fontSize: '1.8rem', color: 'var(--primary-dark)' }}>{club.name}</h1>
               <span className="badge badge-trust">{club.category}</span>
@@ -49,6 +49,7 @@ export const ClubDetails = () => {
               <div style={{ color: 'var(--primary-light)', fontSize: '0.82rem' }}>{l.role}</div>
             </div>
           ))}
+          {club.leadership.length === 0 && <p style={{ color: 'var(--text-muted)' }}>Leadership details are not published yet.</p>}
         </div>
 
         <div className="student-card">
@@ -56,7 +57,7 @@ export const ClubDetails = () => {
             <Bell size={18} color="var(--warning)" /> Club Announcements
           </h3>
           {club.announcements.length === 0 ? (
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem' }}>No recent announcements.</p>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem' }}>No club announcements have been published.</p>
           ) : (
             club.announcements.map((ann, i) => (
               <div key={i} style={{ padding: '0.75rem', background: '#f8fafc', borderRadius: 'var(--radius-md)', marginBottom: '0.5rem', fontSize: '0.88rem' }}>

@@ -30,9 +30,9 @@ export const ManageEvents = () => {
     setShowModal(false);
   };
 
-  const handleToggleStatus = async (id) => {
-    const updated = await eventManagementService.toggleStatus(id);
-    setEvents(updated);
+  const handleDelete = async (id) => {
+    await eventManagementService.deleteEvent(id);
+    setEvents((items) => items.filter((event) => event.id !== id));
   };
 
   return (
@@ -68,11 +68,11 @@ export const ManageEvents = () => {
                 <td>{ev.organizer}</td>
                 <td>{ev.date} ({ev.time})</td>
                 <td>{ev.venue}</td>
-                <td>{ev.registrationsCount} Registered</td>
-                <td><span className={`status-badge ${ev.status === 'Published' ? 'status-published' : 'status-suspended'}`}>{ev.status}</span></td>
+              <td>—</td>
+              <td><span className="status-badge status-published">{ev.status}</span></td>
                 <td>
-                  <button className="btn btn-outline" style={{ padding: '0.3rem 0.6rem', fontSize: '0.78rem' }} onClick={() => handleToggleStatus(ev.id)}>
-                    {ev.status === 'Published' ? 'Cancel Event' : 'Publish'}
+                  <button className="btn btn-outline" style={{ padding: '0.3rem 0.6rem', fontSize: '0.78rem' }} onClick={() => handleDelete(ev.id)}>
+                    Delete event
                   </button>
                 </td>
               </tr>

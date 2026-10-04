@@ -2,28 +2,41 @@ import React, { useState, useEffect } from 'react';
 import { postService } from '../services/postService';
 import { PostCard } from '../components/PostCard';
 import { CreatePostModal } from '../components/CreatePost';
-import { PlusCircle, Filter } from 'lucide-react';
+import { PlusCircle, RefreshCw } from 'lucide-react';
+import { apiErrorMessage } from '../../services/api';
 
 export const Feed = () => {
   const [posts, setPosts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCat, setSelectedCat] = useState('All');
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  const refresh = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const p = await postService.getPosts(selectedCat);
+      setPosts(p);
+    } catch (requestError) {
+      setError(apiErrorMessage(requestError, 'Posts could not be loaded.'));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     async function loadData() {
-      const cats = await postService.getCategories();
-      setCategories(["All", ...cats]);
-      const p = await postService.getPosts(selectedCat);
-      setPosts(p);
+      setCategories(['All', ...(await postService.getCategories())]);
+      await refresh();
     }
     loadData();
   }, [selectedCat]);
 
   const handleCreatePost = async (postData) => {
     await postService.createPost(postData);
-    const updated = await postService.getPosts(selectedCat);
-    setPosts(updated);
+    await refresh();
   };
 
   return (
@@ -53,8 +66,11 @@ export const Feed = () => {
       </div>
 
       <div>
+        {loading && <p role="status" className="student-card">Loading campus posts…</p>}
+        {error && <div className="student-card" role="alert" style={{ color: 'var(--error)' }}>{error} <button className="btn btn-outline" onClick={refresh}><RefreshCw size={15} /> Retry</button></div>}
+        {!loading && !error && posts.length === 0 && <div className="student-card">No posts in this category yet. Start a campus conversation.</div>}
         {posts.map(post => (
-          <PostCard key={post.id} post={post} />
+          <PostCard key={post.id} post={post} onDelete={(id) => setPosts((items) => items.filter((item) => item.id !== id))} />
         ))}
       </div>
 

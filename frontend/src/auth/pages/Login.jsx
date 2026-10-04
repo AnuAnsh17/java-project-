@@ -9,13 +9,13 @@ export const Login = () => {
   return (
     <div className="auth-page">
       <header className="auth-navbar">
-        <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '600', color: 'var(--primary)', fontSize: '0.92rem' }}>
+        <div className="container auth-navbar-inner">
+          <Link to="/" className="auth-back-link">
             <ArrowLeft size={18} />
             Back to Campus Connect
           </Link>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+          <div className="auth-brand-lockup">
             <CollegeLogo className="brand-logo-img" style={{ height: '36px' }} />
             <div className="brand-divider" style={{ height: '20px' }}></div>
             <CampusConnectLogo className="brand-logo-img" style={{ height: '36px' }} />

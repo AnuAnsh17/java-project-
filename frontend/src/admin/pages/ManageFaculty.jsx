@@ -6,18 +6,21 @@ import { Search } from 'lucide-react';
 export const ManageFaculty = () => {
   const [faculty, setFaculty] = useState([]);
   const [search, setSearch] = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => {
     async function load() {
-      const data = await facultyManagementService.getFaculty();
-      setFaculty(data);
+      try { setFaculty(await facultyManagementService.getFaculty()); }
+      catch (requestError) { setError(requestError.response?.data?.detail || 'Faculty records could not be loaded.'); }
     }
     load();
   }, []);
 
-  const handleToggleStatus = async (id) => {
-    const updated = await facultyManagementService.toggleStatus(id);
-    setFaculty(updated);
+  const handleDelete = async (id) => {
+    try {
+      await facultyManagementService.deleteFaculty(id);
+      setFaculty((items) => items.filter((person) => person.id !== id));
+    } catch (requestError) { setError(requestError.response?.data?.detail || 'Faculty account could not be deleted.'); }
   };
 
   const filtered = faculty.filter(f => f.name.toLowerCase().includes(search.toLowerCase()) || f.email.toLowerCase().includes(search.toLowerCase()));
@@ -44,7 +47,8 @@ export const ManageFaculty = () => {
         </div>
       </div>
 
-      <FacultyTable faculty={filtered} onToggleStatus={handleToggleStatus} />
+      {error && <div className="student-card" role="alert">{error}</div>}
+      <FacultyTable faculty={filtered} onDelete={handleDelete} />
     </div>
   );
 };

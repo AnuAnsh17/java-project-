@@ -2,6 +2,8 @@ package com.controller;
 
 import com.entity.Notice;
 import com.service.NoticeService;
+import com.repository.StudentRepository;
+import org.springframework.security.core.Authentication;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +16,11 @@ import java.util.List;
 public class NoticeController {
 
     private final NoticeService noticeService;
+    private final StudentRepository studentRepository;
 
-    public NoticeController(NoticeService noticeService) {
+    public NoticeController(NoticeService noticeService, StudentRepository studentRepository) {
         this.noticeService = noticeService;
+        this.studentRepository = studentRepository;
     }
 
     @GetMapping
@@ -34,7 +38,9 @@ public class NoticeController {
     }
 
     @PostMapping
-    public ResponseEntity<Notice> createNotice(@Valid @RequestBody Notice notice) {
+    public ResponseEntity<Notice> createNotice(@Valid @RequestBody Notice notice, Authentication authentication) {
+        notice.setAuthor(studentRepository.findByEmailIgnoreCase(authentication.getName())
+                .map(student -> student.getName()).orElse(authentication.getName()));
         Notice created = noticeService.createNotice(notice);
         return ResponseEntity
                 .created(URI.create("/api/notices/" + created.getId()))

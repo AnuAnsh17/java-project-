@@ -4,6 +4,8 @@ import com.entity.*;
 import com.repository.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.core.env.Environment;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 
@@ -19,6 +21,8 @@ public class DataInitializer implements CommandLineRunner {
     private final AssignmentRepository assignmentRepository;
     private final ElectionRepository electionRepository;
     private final ComplaintRepository complaintRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final Environment environment;
 
     public DataInitializer(StudentRepository studentRepository,
                            ClubRepository clubRepository,
@@ -28,7 +32,9 @@ public class DataInitializer implements CommandLineRunner {
                            NoticeRepository noticeRepository,
                            AssignmentRepository assignmentRepository,
                            ElectionRepository electionRepository,
-                           ComplaintRepository complaintRepository) {
+                           ComplaintRepository complaintRepository,
+                           PasswordEncoder passwordEncoder,
+                           Environment environment) {
         this.studentRepository = studentRepository;
         this.clubRepository = clubRepository;
         this.postRepository = postRepository;
@@ -38,6 +44,8 @@ public class DataInitializer implements CommandLineRunner {
         this.assignmentRepository = assignmentRepository;
         this.electionRepository = electionRepository;
         this.complaintRepository = complaintRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.environment = environment;
     }
 
     @Override
@@ -50,6 +58,24 @@ public class DataInitializer implements CommandLineRunner {
         seedAssignments();
         seedElections();
         seedComplaints();
+        provisionRoleAccount("ADMIN");
+        provisionRoleAccount("FACULTY");
+    }
+
+    private void provisionRoleAccount(String role) {
+        if (!Boolean.parseBoolean(environment.getProperty("DEMO_ACCOUNTS_ENABLED", "false"))) return;
+        String prefix = "DEMO_" + role + "_";
+        String email = environment.getProperty(prefix + "EMAIL", "").trim().toLowerCase();
+        String password = environment.getProperty(prefix + "PASSWORD", "");
+        String name = environment.getProperty(prefix + "NAME", role + " Demo Account").trim();
+        if (email.isBlank() || password.length() < 8 || !email.endsWith("@tsdcem.ac.in")) return;
+        if (studentRepository.existsByEmailIgnoreCase(email)) return;
+        Student account = new Student();
+        account.setName(name);
+        account.setEmail(email);
+        account.setRole(role);
+        account.setPasswordHash(passwordEncoder.encode(password));
+        studentRepository.save(account);
     }
 
     private void seedStudents() {

@@ -1,6 +1,7 @@
 package com.entity;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "comments")
@@ -12,6 +13,9 @@ public class Comment {
 
     private Long postId;
     private String authorName;
+
+    @JsonIgnore
+    private String authorEmail;
 
     @Column(columnDefinition = "TEXT")
     private String content;
@@ -51,6 +55,9 @@ public class Comment {
     public void setAuthorName(String authorName) {
         this.authorName = authorName;
     }
+
+    public String getAuthorEmail() { return authorEmail; }
+    public void setAuthorEmail(String authorEmail) { this.authorEmail = authorEmail; }
 
     public String getContent() {
         return content;

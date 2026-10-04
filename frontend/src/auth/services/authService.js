@@ -1,32 +1,30 @@
 import api from '../../services/api';
 
-/**
- * Authentication Service Foundation
- * Formatted for integration with Spring Boot Auth Controller endpoints (/api/auth/*)
- */
 export const authService = {
-  /**
-   * Validate college domain locally on frontend
-   * Note: Server-side Spring Boot validation will strictly enforce domain restriction
-   */
   validateCollegeEmail(email) {
     if (!email) return false;
     const cleanEmail = email.trim().toLowerCase();
     return cleanEmail.endsWith('@tsdcem.ac.in');
   },
 
-  /**
-   * Login request blueprint (prepared for REST API endpoint invocation)
-   * @param {string} role - 'student' | 'faculty' | 'admin'
-   * @param {string} email - college email ending with @tsdcem.ac.in
-   * @param {string} password - raw user password
-   */
-  async login(role, email, password) {
+  async login(email, password) {
     if (!this.validateCollegeEmail(email)) {
       throw new Error('Campus Connect is restricted to authorized @tsdcem.ac.in accounts.');
     }
+    const response = await api.post('/auth/login', { email, password });
+    return response.data;
+  },
 
-    // Call to future backend REST API endpoint
-    return api.post('/auth/login', { role, email, password });
+  async register(details) {
+    if (!this.validateCollegeEmail(details.email)) {
+      throw new Error('Use your official @tsdcem.ac.in college email.');
+    }
+    const response = await api.post('/auth/register', details);
+    return response.data;
+  },
+
+  async me() {
+    const response = await api.get('/auth/me');
+    return response.data;
   }
 };

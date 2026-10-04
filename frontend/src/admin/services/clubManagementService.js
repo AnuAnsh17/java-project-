@@ -1,29 +1,18 @@
 import api from '../../services/api';
-import { mockClubsAdmin } from '../mock/mockClubs';
 
-let clubsStore = [...mockClubsAdmin];
+const mapClub = (club) => ({ ...club, leader: club.president || 'Not assigned', status: 'Published' });
 
 export const clubManagementService = {
   async getClubs() {
-    return Promise.resolve(clubsStore);
+    const response = await api.get('/clubs');
+    return response.data.map(mapClub);
   },
-
   async createClub(data) {
-    const newClub = {
-      id: `club-${Date.now()}`,
-      name: data.name,
-      category: data.category || "Technical",
-      leader: data.leader || "Unassigned",
-      membersCount: 1,
-      status: "Active",
-      createdDate: "Just now"
-    };
-    clubsStore.unshift(newClub);
-    return Promise.resolve(newClub);
+    const response = await api.post('/clubs', {
+      name: data.name, category: data.category, president: data.leader,
+      description: `${data.category} campus club`, department: 'All', membersCount: 0
+    });
+    return mapClub(response.data);
   },
-
-  async toggleStatus(id) {
-    clubsStore = clubsStore.map(c => c.id === id ? { ...c, status: c.status === 'Active' ? 'Inactive' : 'Active' } : c);
-    return Promise.resolve(clubsStore);
-  }
+  async deleteClub(id) { await api.delete(`/clubs/${id}`); }
 };

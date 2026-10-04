@@ -2,6 +2,7 @@ package com.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "posts")
@@ -12,6 +13,9 @@ public class Post {
     private Long id;
 
     private String authorName;
+
+    @JsonIgnore
+    private String authorEmail;
 
     @NotBlank(message = "Title is required")
     private String title;
@@ -50,6 +54,9 @@ public class Post {
     public void setAuthorName(String authorName) {
         this.authorName = authorName;
     }
+
+    public String getAuthorEmail() { return authorEmail; }
+    public void setAuthorEmail(String authorEmail) { this.authorEmail = authorEmail; }
 
     public String getTitle() {
         return title;

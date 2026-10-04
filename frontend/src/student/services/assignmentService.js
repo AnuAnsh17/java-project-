@@ -1,29 +1,20 @@
 import api from '../../services/api';
-import { mockAssignmentsData } from '../mock/mockAssignments';
 
-let assignmentsStore = [...mockAssignmentsData];
+const mapAssignment = (item) => ({
+  ...item,
+  deadline: item.dueDate,
+  instructions: item.description,
+  status: item.status || 'PENDING',
+  marks: null
+});
 
 export const assignmentService = {
   async getAssignments() {
-    return Promise.resolve(assignmentsStore);
+    const response = await api.get('/assignments');
+    return response.data.map(mapAssignment);
   },
-
   async getAssignmentById(id) {
-    const asgn = assignmentsStore.find(a => a.id === id);
-    return Promise.resolve(asgn || null);
-  },
-
-  async submitAssignment(id, fileData) {
-    assignmentsStore = assignmentsStore.map(a => {
-      if (a.id === id) {
-        return {
-          ...a,
-          status: "Submitted",
-          submissionDate: new Date().toLocaleString()
-        };
-      }
-      return a;
-    });
-    return Promise.resolve(assignmentsStore.find(a => a.id === id));
+    const response = await api.get(`/assignments/${id}`);
+    return mapAssignment(response.data);
   }
 };

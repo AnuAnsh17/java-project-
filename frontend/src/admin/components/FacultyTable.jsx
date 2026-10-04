@@ -1,7 +1,7 @@
 import React from 'react';
-import { Eye, ShieldOff } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 
-export const FacultyTable = ({ faculty, onToggleStatus }) => {
+export const FacultyTable = ({ faculty, onDelete }) => {
   return (
     <div className="admin-table-container">
       <table className="admin-table">
@@ -10,10 +10,8 @@ export const FacultyTable = ({ faculty, onToggleStatus }) => {
             <th>Name</th>
             <th>College Email</th>
             <th>Department</th>
-            <th>Designation</th>
-            <th>Assigned Classes</th>
-            <th>Status</th>
-            <th>Actions</th>
+            <th>Year</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -22,28 +20,8 @@ export const FacultyTable = ({ faculty, onToggleStatus }) => {
               <td style={{ fontWeight: '600', color: 'var(--primary-dark)' }}>{fac.name}</td>
               <td>{fac.email}</td>
               <td>{fac.department}</td>
-              <td>{fac.designation}</td>
-              <td>
-                {fac.assignedClasses.map((cls, i) => (
-                  <span key={i} className="badge badge-trust" style={{ marginRight: '4px', fontSize: '0.7rem' }}>
-                    {cls}
-                  </span>
-                ))}
-              </td>
-              <td>
-                <span className={`status-badge ${fac.status === 'Active' ? 'status-active' : 'status-suspended'}`}>
-                  {fac.status}
-                </span>
-              </td>
-              <td>
-                <button
-                  className="btn btn-outline"
-                  style={{ padding: '0.3rem 0.6rem', fontSize: '0.78rem', color: fac.status === 'Active' ? 'var(--error)' : 'var(--success)' }}
-                  onClick={() => onToggleStatus(fac.id)}
-                >
-                  {fac.status === 'Active' ? 'Suspend' : 'Activate'}
-                </button>
-              </td>
+              <td>{fac.year || '—'}</td>
+              <td><button className="btn btn-outline" onClick={() => onDelete(fac.id)}><Trash2 size={14} /> Delete</button></td>
             </tr>
           ))}
         </tbody>
