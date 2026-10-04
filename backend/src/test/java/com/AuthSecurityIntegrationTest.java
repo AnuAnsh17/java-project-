@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
@@ -27,7 +26,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "DEMO_FACULTY_PASSWORD=IntegrationDemo123"
 })
 @AutoConfigureMockMvc
-@ActiveProfiles("dev")
 class AuthSecurityIntegrationTest {
     @Autowired MockMvc mvc;
     @Autowired ObjectMapper objectMapper;
