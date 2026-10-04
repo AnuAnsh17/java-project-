@@ -7,6 +7,9 @@ import com.entity.Student;
 import com.repository.StudentRepository;
 import com.security.JwtService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -18,11 +21,14 @@ public class AuthService {
     private final StudentRepository students;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
 
-    public AuthService(StudentRepository students, PasswordEncoder passwordEncoder, JwtService jwtService) {
+    public AuthService(StudentRepository students, PasswordEncoder passwordEncoder, JwtService jwtService,
+                       AuthenticationManager authenticationManager) {
         this.students = students;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.authenticationManager = authenticationManager;
     }
 
     public AuthResponse register(RegisterRequest request) {
@@ -45,9 +51,13 @@ public class AuthService {
     }
 
     public AuthResponse login(AuthRequest request) {
-        Student student = students.findByEmailIgnoreCase(request.email().trim())
-                .filter(account -> account.getPasswordHash() != null
-                        && passwordEncoder.matches(request.password(), account.getPasswordHash()))
+        String email = request.email().trim().toLowerCase(Locale.ROOT);
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, request.password()));
+        } catch (AuthenticationException exception) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
+        }
+        Student student = students.findByEmailIgnoreCase(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password"));
         return response(student);
     }
