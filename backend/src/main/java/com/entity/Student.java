@@ -2,6 +2,7 @@ package com.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "students")
@@ -15,9 +16,18 @@ public class Student {
     private String name;
 
     @NotBlank(message = "Email is required")
+    @Column(nullable = false, unique = true)
     private String email;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Column(name = "password_hash")
+    private String passwordHash;
+
+    @Column(nullable = false)
+    private String role = "STUDENT";
+
     private String department;
+    @Column(name = "`year`")
     private String year;
     private String division;
 
@@ -59,6 +69,11 @@ public class Student {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public String getPasswordHash() { return passwordHash; }
+    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
 
     public String getDepartment() {
         return department;

@@ -11,7 +11,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/assignments")
-@CrossOrigin(origins = "*")
 public class AssignmentController {
 
     private final AssignmentService assignmentService;

@@ -11,7 +11,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/clubs")
-@CrossOrigin(origins = "*")
 public class ClubController {
 
     private final ClubService clubService;
