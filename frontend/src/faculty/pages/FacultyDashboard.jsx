@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, BookOpenCheck, Megaphone } from 'lucide-react';
+import { ArrowRight, BookOpenCheck, Megaphone, Plus, RefreshCw, Sparkles } from 'lucide-react';
 import { useFaculty } from '../hooks/useFaculty';
 import { assignmentService } from '../services/assignmentService';
 import { facultyAnnouncementService } from '../services/facultyAnnouncementService';
@@ -14,37 +14,53 @@ export const FacultyDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    Promise.all([assignmentService.getAssignments(), facultyAnnouncementService.getAnnouncements()])
-      .then(([assignments, notices]) => setData({ assignments: assignments.slice(0, 3), notices: notices.slice(0, 3) }))
-      .catch((requestError) => setError(apiErrorMessage(requestError, 'Faculty workspace could not be loaded.')))
-      .finally(() => setLoading(false));
+  const loadDashboard = useCallback(async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const [assignments, notices] = await Promise.all([
+        assignmentService.getAssignments(), facultyAnnouncementService.getAnnouncements()
+      ]);
+      setData({ assignments, notices });
+    } catch (requestError) {
+      setError(apiErrorMessage(requestError, 'Faculty workspace could not be loaded.'));
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
+  useEffect(() => { loadDashboard(); }, [loadDashboard]);
+
   return (
-    <div>
-      <section className="student-card" style={{ background: 'linear-gradient(135deg, #0369a1, #0f172a)', color: 'white', marginBottom: '1.5rem' }}>
-        <h1 style={{ color: 'white', fontSize: '1.8rem', marginBottom: '0.35rem' }}>Welcome, {facultyProfile?.name || 'Faculty member'}</h1>
-        <p style={{ color: '#cbd5e1', margin: 0 }}>{facultyProfile?.department || 'Faculty workspace'} · Campus Connect</p>
+    <div className="workspace-page">
+      <section className="dashboard-hero faculty-hero">
+        <div className="dashboard-hero-copy">
+          <div className="dashboard-eyebrow"><Sparkles size={15} /> FACULTY WORKSPACE</div>
+          <h1>Welcome back, {facultyProfile?.name?.split(' ')[0] || 'Faculty'}.</h1>
+          <p>{facultyProfile?.department || 'Your academic workspace'} · Stay on top of teaching and campus updates.</p>
+        </div>
+        <div className="dashboard-hero-actions">
+          <button className="btn btn-hero-primary" onClick={() => navigate('/faculty/assignments/create')}><Plus size={17} /> New assignment</button>
+          <button className="btn btn-hero-secondary" onClick={() => navigate('/faculty/announcements')}>Publish an update <ArrowRight size={16} /></button>
+        </div>
+        <div className="hero-orbit hero-orbit-one" aria-hidden="true" />
+        <div className="hero-orbit hero-orbit-two" aria-hidden="true" />
       </section>
-      <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
-        <button className="btn btn-primary" onClick={() => navigate('/faculty/assignments/create')}>Create assignment</button>
-        <button className="btn btn-outline" onClick={() => navigate('/faculty/announcements')}>Post announcement</button>
-      </div>
-      {loading && <div className="student-card" role="status">Loading your classes and updates…</div>}
-      {error && <div className="student-card" role="alert">{error}</div>}
-      {!loading && !error && <div className="grid-2">
+
+      {error && <div className="student-card api-error-state" role="alert"><span>{error}</span><button className="btn btn-outline" onClick={loadDashboard}><RefreshCw size={15} /> Retry</button></div>}
+      {loading && <div className="dashboard-loading-grid" role="status" aria-label="Loading faculty dashboard"><div /><div /><div className="dashboard-loading-wide" /></div>}
+      {!loading && !error && <div className="grid-2 faculty-dashboard-grid">
         <section>
-          <div className="student-section-heading"><h2><BookOpenCheck size={18} /> Assignments</h2><button className="btn btn-outline" onClick={() => navigate('/faculty/assignments')}>See all <ArrowRight size={14} /></button></div>
-          {data.assignments.map((item) => <AssignmentCardFaculty key={item.id} assignment={item} />)}
-          {!data.assignments.length && <div className="student-card">No assignments have been published.</div>}
+          <div className="student-section-heading"><div><span className="section-kicker">TEACHING</span><h2><BookOpenCheck size={18} /> Assignments <span className="heading-count">{data.assignments.length}</span></h2></div><button className="btn btn-quiet" onClick={() => navigate('/faculty/assignments')}>See all <ArrowRight size={14} /></button></div>
+          {data.assignments.slice(0, 4).map((item) => <AssignmentCardFaculty key={item.id} assignment={item} />)}
+          {!data.assignments.length && <div className="student-card dashboard-empty"><span className="empty-icon"><BookOpenCheck size={20} /></span><h3>No assignments yet</h3><p>Create an assignment when you’re ready to share work with students.</p><button className="btn btn-primary" onClick={() => navigate('/faculty/assignments/create')}><Plus size={16} /> Create assignment</button></div>}
         </section>
         <section>
-          <div className="student-section-heading"><h2><Megaphone size={18} /> Notices</h2><button className="btn btn-outline" onClick={() => navigate('/faculty/announcements')}>See all</button></div>
-          {data.notices.map((notice) => <div className="student-card" key={notice.id}>
-            <span className="badge badge-trust">{notice.target}</span><h3>{notice.title}</h3><p>{notice.message}</p>
+          <div className="student-section-heading"><div><span className="section-kicker">CAMPUS UPDATES</span><h2><Megaphone size={18} /> Notices <span className="heading-count">{data.notices.length}</span></h2></div><button className="btn btn-quiet" onClick={() => navigate('/faculty/announcements')}>See all <ArrowRight size={14} /></button></div>
+          {data.notices.slice(0, 4).map((notice) => <div className="student-card notice-dashboard-card" key={notice.id}>
+            <span className="badge badge-trust">{notice.target || 'Campus notice'}</span><h3>{notice.title}</h3><p>{notice.message || notice.content}</p>
           </div>)}
-          {!data.notices.length && <div className="student-card">No notices have been published.</div>}
+          {!data.notices.length && <div className="student-card compact-empty">No notices have been published.</div>}
         </section>
       </div>}
     </div>

@@ -2,23 +2,29 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { assignmentService } from '../services/assignmentService';
 import { ArrowLeft, PlusCircle } from 'lucide-react';
+import { apiErrorMessage } from '../../services/api';
 
 export const CreateAssignment = () => {
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
   const [subject, setSubject] = useState('Java Programming (IT302)');
-  const [targetClass, setTargetClass] = useState('SE IT Division A');
   const [deadline, setDeadline] = useState('');
   const [totalMarks, setTotalMarks] = useState(20);
   const [instructions, setInstructions] = useState('');
   const [createdMsg, setCreatedMsg] = useState('');
+  const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title || !deadline || !instructions) return;
-    await assignmentService.createAssignment({ title, subject, targetClass, deadline, totalMarks, instructions });
-    setCreatedMsg('Assignment published successfully for SE IT Division A!');
-    setTimeout(() => navigate('/faculty/assignments'), 1500);
+    try {
+      setSaving(true); setError('');
+      await assignmentService.createAssignment({ title, subject, deadline, totalMarks, instructions });
+      setCreatedMsg('Assignment published for campus students.');
+      setTimeout(() => navigate('/faculty/assignments'), 1200);
+    } catch (requestError) { setError(apiErrorMessage(requestError, 'Assignment could not be published.')); }
+    finally { setSaving(false); }
   };
 
   return (
@@ -42,7 +48,9 @@ export const CreateAssignment = () => {
             <input type="text" className="form-input" placeholder="e.g. Java Assignment 4 — Spring Boot REST APIs" value={title} onChange={(e) => setTitle(e.target.value)} required />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          <p className="form-hint">Assignments are currently visible to campus students; the API does not support choosing a target class.</p>
+          {error && <div className="student-card" role="alert">{error}</div>}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
             <div className="form-group">
               <label className="form-label">Subject</label>
               <select className="form-input" value={subject} onChange={(e) => setSubject(e.target.value)}>
@@ -51,13 +59,6 @@ export const CreateAssignment = () => {
               </select>
             </div>
 
-            <div className="form-group">
-              <label className="form-label">Target Class / Group</label>
-              <select className="form-input" value={targetClass} onChange={(e) => setTargetClass(e.target.value)}>
-                <option value="SE IT Division A">SE IT Division A</option>
-                <option value="BE IT Division B">BE IT Division B</option>
-              </select>
-            </div>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
@@ -79,7 +80,7 @@ export const CreateAssignment = () => {
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1.5rem' }}>
             <button type="button" className="btn btn-outline" onClick={() => navigate('/faculty/assignments')}>Cancel</button>
-            <button type="submit" className="btn btn-primary"><PlusCircle size={18} /> Publish Assignment</button>
+            <button type="submit" className="btn btn-primary" disabled={saving}>{saving ? 'Publishing…' : <><PlusCircle size={18} /> Publish Assignment</>}</button>
           </div>
         </form>
       </div>

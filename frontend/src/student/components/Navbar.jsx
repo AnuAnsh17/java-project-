@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, LogOut, User } from 'lucide-react';
 import { CollegeLogo, CampusConnectLogo } from '../../components/common/PlaceholderLogo';
-import { NotificationBell } from './NotificationBell';
 import { useStudent } from '../hooks/useStudent';
 import { useAuth } from '../../auth/hooks/useAuth';
 
-export const StudentNavbar = ({ onToggleSidebar }) => {
+export const StudentNavbar = ({ onToggleSidebar, mobileOpen }) => {
   const { profile } = useStudent();
   const { logout } = useAuth();
   const navigate = useNavigate();
@@ -15,8 +14,8 @@ export const StudentNavbar = ({ onToggleSidebar }) => {
   return (
     <header className="student-top-navbar">
       <div className="navbar-brand-student">
-        <button className="notif-bell-btn d-lg-none" onClick={onToggleSidebar} aria-label="Toggle menu">
-          <Menu size={22} />
+        <button type="button" className="notif-bell-btn d-lg-none" onClick={onToggleSidebar} aria-label={mobileOpen ? 'Close menu' : 'Open menu'} aria-expanded={mobileOpen}>
+          {mobileOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
         <Link to="/student" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
           <CollegeLogo className="brand-logo-img" style={{ height: '34px' }} />
@@ -29,34 +28,28 @@ export const StudentNavbar = ({ onToggleSidebar }) => {
       </div>
 
       <div className="student-header-actions">
-        <NotificationBell />
-
         <div style={{ position: 'relative' }}>
-          <div className="student-user-pill" onClick={() => setShowProfileMenu(!showProfileMenu)}>
-            <img
-              src={profile?.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80"}
-              alt={profile?.name || "Student"}
-              className="student-avatar-sm"
-            />
+          <button type="button" className="student-user-pill" onClick={() => setShowProfileMenu(!showProfileMenu)} aria-expanded={showProfileMenu} aria-haspopup="menu">
+            <span className="student-avatar-sm" aria-hidden="true">{profile?.name?.trim()?.[0]?.toUpperCase() || 'S'}</span>
             <span style={{ fontWeight: '600', fontSize: '0.88rem' }}>{profile?.name || "Student"}</span>
-          </div>
+          </button>
 
           {showProfileMenu && (
-            <div className="notif-dropdown" style={{ top: '50px', width: '200px' }}>
-              <div
-                className="notif-item"
+            <div className="notif-dropdown" role="menu" style={{ top: '50px', width: '200px' }}>
+              <button type="button" className="notif-item"
+                role="menuitem"
                 onClick={() => { setShowProfileMenu(false); navigate('/student/profile'); }}
                 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.88rem' }}
               >
                 <User size={16} /> My Profile
-              </div>
-              <div
-                className="notif-item"
+              </button>
+              <button type="button" className="notif-item"
+                role="menuitem"
                 onClick={() => { setShowProfileMenu(false); logout(); navigate('/login', { replace: true }); }}
                 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.88rem', color: 'var(--error)' }}
               >
                 <LogOut size={16} /> Logout
-              </div>
+              </button>
             </div>
           )}
         </div>

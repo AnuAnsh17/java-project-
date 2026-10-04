@@ -215,3 +215,42 @@
   .student-section-heading { align-items: flex-start; }
   .student-card:has(.profile-identity-mark) { align-items: flex-start; flex-direction: column; }
 }
+
+/* Role workspace: student */
+.student-top-navbar {
+  height: 68px;
+  padding-inline: clamp(1rem, 3vw, 2.25rem);
+  background: rgba(255, 255, 255, .94);
+  border-bottom-color: var(--border-light);
+  box-shadow: 0 4px 20px rgba(23, 42, 53, .035);
+  backdrop-filter: blur(14px);
+}
+.student-main-layout { min-height: calc(100vh - 68px); }
+.student-sidebar {
+  width: 264px;
+  padding: 1.5rem 1rem;
+  background: #fbfcfc;
+  border-right-color: #e7eded;
+  gap: .35rem;
+}
+.sidebar-nav-item { padding: .72rem .85rem; font-size: .9rem; border: 1px solid transparent; }
+.sidebar-nav-item.active {
+  background: #eaf2f2;
+  color: var(--primary);
+  border: 1px solid #d9e8e8;
+  border-left: 1px solid #d9e8e8;
+  box-shadow: inset 3px 0 var(--primary-light);
+}
+.student-content-area {
+  width: min(100%, 1460px);
+  max-width: 1460px;
+  margin-inline: auto;
+  padding: clamp(1.25rem, 3vw, 2.6rem) clamp(1rem, 3.25vw, 3rem);
+}
+.student-card { padding: clamp(1rem, 2vw, 1.5rem); }
+
+@media (max-width: 991px) {
+  .student-sidebar { top: 68px; left: -280px; width: min(280px, 84vw); }
+  .student-sidebar.mobile-open { left: 0; }
+  .student-content-area { padding: 1.25rem 1rem 2rem; }
+}

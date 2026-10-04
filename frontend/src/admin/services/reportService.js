@@ -1,31 +1,51 @@
 import api from '../../services/api';
-import { mockReportsAdmin } from '../mock/mockReports';
 
-let reportsStore = [...mockReportsAdmin];
+const statusLabels = {
+  SUBMITTED: 'Submitted',
+  PENDING: 'Submitted',
+  UNDER_REVIEW: 'Under review',
+  INVESTIGATING: 'Investigating',
+  RESOLVED: 'Resolved',
+  REJECTED: 'Rejected'
+};
+
+const statusValues = {
+  Submitted: 'SUBMITTED',
+  'Under review': 'UNDER_REVIEW',
+  Investigating: 'INVESTIGATING',
+  Resolved: 'RESOLVED',
+  Rejected: 'REJECTED'
+};
+
+const mapReport = (report) => ({
+  ...report,
+  subject: report.title,
+  dateSubmitted: '—',
+  identityMode: report.anonymous ? 'Anonymous' : 'Identified',
+  reporterName: report.anonymous ? 'Protected' : report.submittedBy,
+  status: statusLabels[report.status] || report.status || 'Submitted'
+});
 
 export const reportService = {
   async getReports() {
-    return Promise.resolve(reportsStore);
+    const response = await api.get('/complaints');
+    return response.data.map(mapReport);
   },
 
   async getReportById(id) {
-    const r = reportsStore.find(rep => rep.id === id);
-    return Promise.resolve(r || null);
+    const response = await api.get(`/complaints/${id}`);
+    return mapReport(response.data);
   },
 
   async updateReport(id, updateData) {
-    reportsStore = reportsStore.map(r => {
-      if (r.id === id) {
-        return {
-          ...r,
-          status: updateData.status || r.status,
-          internalNotes: updateData.internalNotes || r.internalNotes,
-          resolutionResponse: updateData.resolutionResponse || r.resolutionResponse,
-          assignedAdmin: updateData.assignedAdmin || r.assignedAdmin
-        };
-      }
-      return r;
+    const response = await api.put(`/complaints/${id}`, {
+      title: updateData.title,
+      description: updateData.description,
+      category: updateData.category,
+      status: statusValues[updateData.status] || updateData.status,
+      submittedBy: updateData.submittedBy,
+      anonymous: updateData.anonymous
     });
-    return Promise.resolve(reportsStore.find(r => r.id === id));
+    return mapReport(response.data);
   }
 };

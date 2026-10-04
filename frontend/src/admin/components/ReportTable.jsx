@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Eye, ShieldAlert, Lock } from 'lucide-react';
+import { Eye, Lock } from 'lucide-react';
 
 export const ReportTable = ({ reports }) => {
   const navigate = useNavigate();
@@ -13,7 +13,6 @@ export const ReportTable = ({ reports }) => {
             <th>Report ID</th>
             <th>Subject</th>
             <th>Category</th>
-            <th>Date</th>
             <th>Identity Mode</th>
             <th>Reporter</th>
             <th>Status</th>
@@ -26,7 +25,6 @@ export const ReportTable = ({ reports }) => {
               <td style={{ fontFamily: 'monospace', fontWeight: '600' }}>{rep.id}</td>
               <td style={{ fontWeight: '600', color: 'var(--primary-dark)' }}>{rep.subject}</td>
               <td><span className="badge badge-trust">{rep.category}</span></td>
-              <td>{rep.dateSubmitted}</td>
               <td>
                 {rep.identityMode === 'Anonymous' ? (
                   <span className="status-badge status-anonymous"><Lock size={12} /> Anonymous</span>
@@ -36,7 +34,7 @@ export const ReportTable = ({ reports }) => {
               </td>
               <td>{rep.identityMode === 'Anonymous' ? <span style={{ color: 'var(--text-muted)' }}>Protected</span> : rep.reporterName}</td>
               <td>
-                <span className="status-badge status-pending">{rep.status}</span>
+                <span className={`status-badge ${rep.status === 'Resolved' ? 'status-published' : 'status-pending'}`}>{rep.status}</span>
               </td>
               <td>
                 <button className="btn btn-primary" style={{ padding: '0.3rem 0.75rem', fontSize: '0.78rem' }} onClick={() => navigate(`/admin/reports/${rep.id}`)}>

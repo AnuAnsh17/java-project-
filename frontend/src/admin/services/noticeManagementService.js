@@ -3,7 +3,6 @@ import api from '../../services/api';
 const mapNotice = (notice) => ({
   ...notice,
   issuingAuthority: notice.author || 'Campus Connect',
-  audience: 'Campus community',
   priority: notice.category || 'General',
   publishDate: notice.publishedAt,
   status: 'Published'

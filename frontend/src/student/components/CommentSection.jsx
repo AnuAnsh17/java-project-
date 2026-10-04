@@ -4,12 +4,21 @@ import { Send } from 'lucide-react';
 
 export const CommentSection = ({ comments, onAddComment }) => {
   const [text, setText] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!text.trim()) return;
-    onAddComment(text);
-    setText('');
+    const value = text.trim();
+    if (!value || submitting) return;
+    setSubmitting(true);
+    try {
+      await onAddComment(value);
+      setText('');
+    } catch {
+      // The post card exposes the API error; keep the unsent text available to retry.
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -23,10 +32,12 @@ export const CommentSection = ({ comments, onAddComment }) => {
           placeholder="Write a comment..."
           value={text}
           onChange={(e) => setText(e.target.value)}
+          maxLength={2000}
+          aria-label="Write a comment"
           style={{ padding: '0.5rem 1rem' }}
         />
-        <button type="submit" className="btn btn-primary" style={{ padding: '0.5rem 1.25rem' }}>
-          <Send size={16} />
+        <button type="submit" className="btn btn-primary" style={{ padding: '0.5rem 1.25rem' }} disabled={submitting || !text.trim()} aria-label="Post comment">
+          <Send size={16} /> {submitting ? 'Sending' : ''}
         </button>
       </form>
 

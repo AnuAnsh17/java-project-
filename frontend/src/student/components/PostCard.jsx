@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MessageSquare, Pencil, Trash2, X, Check } from 'lucide-react';
 import { VoteButton } from './VoteButton';
 import { CommentSection } from './CommentSection';
@@ -15,6 +15,12 @@ export const PostCard = ({ post, onDelete }) => {
   const [content, setContent] = useState(post.content);
   const [error, setError] = useState('');
 
+  useEffect(() => {
+    setCurrentPost(post);
+    setTitle(post.title);
+    setContent(post.content);
+  }, [post]);
+
   const handleVote = async (dir) => {
     try {
       const updated = await postService.votePost(currentPost.id, dir);
@@ -27,19 +33,24 @@ export const PostCard = ({ post, onDelete }) => {
 
   const handleAddComment = async (commentText) => {
     try {
-      await postService.addComment(currentPost.id, commentText);
-      const refreshed = await postService.getPostById(currentPost.id);
-      setCurrentPost(refreshed);
+      const comment = await postService.addComment(currentPost.id, commentText);
+      setCurrentPost((postState) => ({
+        ...postState,
+        comments: [...(postState.comments || []), comment],
+        commentsCount: (postState.commentsCount || 0) + 1
+      }));
       setError('');
     } catch (requestError) {
       setError(apiErrorMessage(requestError));
+      throw requestError;
     }
   };
 
   const handleUpdate = async (event) => {
     event.preventDefault();
     try {
-      setCurrentPost(await postService.updatePost(currentPost.id, { title, content, category: currentPost.category }));
+      await postService.updatePost(currentPost.id, { title, content, category: currentPost.category });
+      setCurrentPost(await postService.getPostById(currentPost.id));
       setEditing(false);
       setError('');
     } catch (requestError) { setError(apiErrorMessage(requestError)); }
@@ -54,10 +65,10 @@ export const PostCard = ({ post, onDelete }) => {
   const canManage = user?.role === 'ADMIN' || currentPost.authorName === user?.name;
 
   return (
-    <div className="student-card student-card-hover" style={{ marginBottom: '1.25rem', overflow: 'hidden', minWidth: 0, wordBreak: 'break-word' }}>
+    <article className="student-card student-card-hover post-card" style={{ marginBottom: '1.25rem', overflow: 'hidden', minWidth: 0, wordBreak: 'break-word' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div aria-hidden="true" style={{ width: '38px', height: '38px', borderRadius: '50%', display: 'grid', placeItems: 'center', background: '#dbeafe', color: '#1d4ed8', fontWeight: 700 }}>
+          <div aria-hidden="true" className="post-avatar">
             {(currentPost.authorName || 'C').slice(0, 1).toUpperCase()}
           </div>
           <div>
@@ -82,7 +93,7 @@ export const PostCard = ({ post, onDelete }) => {
         <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', marginBottom: '1rem', lineHeight: '1.5' }}>{currentPost.content}</p>
       </>}
 
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid var(--border-light)', paddingTop: '0.75rem' }}>
+      <div className="post-actions">
         <VoteButton votes={currentPost.votes} userVoted={currentPost.userVoted} onVote={handleVote} />
 
         <div style={{ display: 'flex', gap: '1rem' }}>
@@ -102,6 +113,6 @@ export const PostCard = ({ post, onDelete }) => {
       {showComments && (
         <CommentSection comments={currentPost.comments} onAddComment={handleAddComment} />
       )}
-    </div>
+    </article>
   );
 };

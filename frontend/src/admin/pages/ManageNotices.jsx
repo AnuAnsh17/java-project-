@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { noticeManagementService } from '../services/noticeManagementService';
-import { PlusCircle, Bell, Paperclip, Archive } from 'lucide-react';
+import { PlusCircle, Trash2 } from 'lucide-react';
+import { apiErrorMessage } from '../../services/api';
 
 export const ManageNotices = () => {
   const [notices, setNotices] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [authority, setAuthority] = useState('College Administration');
-  const [audience, setAudience] = useState('All Students');
   const [priority, setPriority] = useState('Important');
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     async function load() {
-      const n = await noticeManagementService.getNotices();
-      setNotices(n);
+      try { setError(''); setNotices(await noticeManagementService.getNotices()); }
+      catch (e) { setError(apiErrorMessage(e, 'Notices could not be loaded.')); }
+      finally { setLoading(false); }
     }
     load();
   }, []);
@@ -22,17 +25,17 @@ export const ManageNotices = () => {
   const handleCreate = async (e) => {
     e.preventDefault();
     if (!title) return;
-    await noticeManagementService.createNotice({ title, content, issuingAuthority: authority, audience, priority });
-    const updated = await noticeManagementService.getNotices();
-    setNotices(updated);
-    setTitle('');
-    setContent('');
-    setShowModal(false);
+    try {
+      setSaving(true); setError('');
+      const created = await noticeManagementService.createNotice({ title, content, priority });
+      setNotices((items) => [created, ...items]); setTitle(''); setContent(''); setShowModal(false);
+    } catch (e) { setError(apiErrorMessage(e, 'Notice could not be published.')); }
+    finally { setSaving(false); }
   };
 
   const handleArchive = async (id) => {
-    const updated = await noticeManagementService.archiveNotice(id);
-    setNotices(updated);
+    try { setError(''); await noticeManagementService.archiveNotice(id); setNotices((items) => items.filter((item) => item.id !== id)); }
+    catch (e) { setError(apiErrorMessage(e, 'Notice could not be deleted.')); }
   };
 
   return (
@@ -48,13 +51,13 @@ export const ManageNotices = () => {
         </button>
       </div>
 
+      {error && <div className="student-card" role="alert">{error}</div>}
       <div className="admin-table-container">
         <table className="admin-table">
           <thead>
             <tr>
               <th>Notice Title</th>
               <th>Issuing Authority</th>
-              <th>Target Audience</th>
               <th>Priority</th>
               <th>Publish Date</th>
               <th>Status</th>
@@ -62,18 +65,17 @@ export const ManageNotices = () => {
             </tr>
           </thead>
           <tbody>
-            {notices.map(n => (
+            {loading ? <tr><td colSpan="6">Loading notices…</td></tr> : notices.length === 0 ? <tr><td colSpan="6">No published notices yet.</td></tr> : notices.map(n => (
               <tr key={n.id}>
                 <td style={{ fontWeight: '600', color: 'var(--primary-dark)' }}>{n.title}</td>
                 <td>{n.issuingAuthority}</td>
-                <td><span className="badge badge-trust">{n.audience}</span></td>
                 <td><span style={{ color: n.priority === 'Important' ? 'var(--error)' : 'var(--text-muted)', fontWeight: '700' }}>{n.priority}</span></td>
                 <td>{n.publishDate}</td>
                 <td><span className={`status-badge ${n.status === 'Published' ? 'status-published' : 'status-suspended'}`}>{n.status}</span></td>
                 <td>
                   {n.status === 'Published' && (
                     <button className="btn btn-outline" style={{ padding: '0.3rem 0.6rem', fontSize: '0.78rem' }} onClick={() => handleArchive(n.id)}>
-                      <Archive size={14} /> Archive
+                      <Trash2 size={14} /> Delete
                     </button>
                   )}
                 </td>
@@ -96,24 +98,7 @@ export const ManageNotices = () => {
                 <label className="form-label">Notice details</label>
                 <textarea className="form-input" rows={4} value={content} onChange={(e) => setContent(e.target.value)} required />
               </div>
-              <div className="form-group">
-                <label className="form-label">Issuing Authority</label>
-                <select className="form-input" value={authority} onChange={(e) => setAuthority(e.target.value)}>
-                  <option value="College Administration">College Administration</option>
-                  <option value="Examination Cell">Examination Cell</option>
-                  <option value="Principal Office">Principal Office</option>
-                  <option value="Department of IT">Department of IT</option>
-                </select>
-              </div>
-              <div className="form-group">
-                <label className="form-label">Target Audience</label>
-                <select className="form-input" value={audience} onChange={(e) => setAudience(e.target.value)}>
-                  <option value="All Students">All Students</option>
-                  <option value="All Faculty">All Faculty</option>
-                  <option value="Students + Faculty">Students + Faculty</option>
-                  <option value="SE IT Division A">SE IT Division A</option>
-                </select>
-              </div>
+              <p className="form-hint">This notice is visible to the campus community. The current API does not support choosing an audience or issuing authority.</p>
               <div className="form-group">
                 <label className="form-label">Priority Label</label>
                 <select className="form-input" value={priority} onChange={(e) => setPriority(e.target.value)}>
@@ -123,7 +108,7 @@ export const ManageNotices = () => {
               </div>
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1.5rem' }}>
                 <button type="button" className="btn btn-outline" onClick={() => setShowModal(false)}>Cancel</button>
-                <button type="submit" className="btn btn-primary">Publish Circular</button>
+                <button type="submit" className="btn btn-primary" disabled={saving}>{saving ? 'Publishing…' : 'Publish Circular'}</button>
               </div>
             </form>
           </div>

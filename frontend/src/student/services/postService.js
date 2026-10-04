@@ -33,14 +33,20 @@ export const postService = {
   async getCategories() { return postCategories; },
 
   async getPosts(categoryFilter = 'All') {
-    const response = await api.get('/posts');
+    const [response, commentResponse] = await Promise.all([
+      api.get('/posts'),
+      api.get('/comments')
+    ]);
     const records = categoryFilter === 'All'
       ? response.data
       : response.data.filter((post) => post.category === categoryFilter);
-    return Promise.all(records.map(async (post) => {
-      const comments = await api.get('/comments', { params: { postId: post.id } }).then((result) => result.data).catch(() => []);
-      return mapPost(post, comments);
-    }));
+    const commentsByPost = commentResponse.data.reduce((grouped, comment) => {
+      const postComments = grouped.get(comment.postId) || [];
+      postComments.push(comment);
+      grouped.set(comment.postId, postComments);
+      return grouped;
+    }, new Map());
+    return records.map((post) => mapPost(post, commentsByPost.get(post.id) || []));
   },
 
   async getPostById(id) {

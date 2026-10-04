@@ -11,8 +11,9 @@ export const AdminLayout = () => {
   return (
     <AdminProvider>
       <div className="admin-app-shell">
-        <AdminNavbar onToggleSidebar={() => setMobileSidebar(!mobileSidebar)} />
+        <AdminNavbar mobileOpen={mobileSidebar} onToggleSidebar={() => setMobileSidebar(!mobileSidebar)} />
         <div className="admin-main-layout">
+          {mobileSidebar && <button className="workspace-backdrop" type="button" aria-label="Close navigation" onClick={() => setMobileSidebar(false)} />}
           <AdminSidebar mobileOpen={mobileSidebar} onCloseMobile={() => setMobileSidebar(false)} />
           <main className="admin-content-area">
             <Outlet />

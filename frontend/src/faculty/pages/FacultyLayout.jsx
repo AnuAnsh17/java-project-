@@ -11,8 +11,9 @@ export const FacultyLayout = () => {
   return (
     <FacultyProvider>
       <div className="faculty-app-shell">
-        <FacultyNavbar onToggleSidebar={() => setMobileSidebar(!mobileSidebar)} />
+        <FacultyNavbar mobileOpen={mobileSidebar} onToggleSidebar={() => setMobileSidebar(!mobileSidebar)} />
         <div className="faculty-main-layout">
+          {mobileSidebar && <button className="workspace-backdrop" type="button" aria-label="Close navigation" onClick={() => setMobileSidebar(false)} />}
           <FacultySidebar mobileOpen={mobileSidebar} onCloseMobile={() => setMobileSidebar(false)} />
           <main className="faculty-content-area">
             <Outlet />

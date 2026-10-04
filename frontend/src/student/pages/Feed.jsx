@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { postService } from '../services/postService';
 import { PostCard } from '../components/PostCard';
 import { CreatePostModal } from '../components/CreatePost';
@@ -12,27 +12,32 @@ export const Feed = () => {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const requestSequence = useRef(0);
 
-  const refresh = async () => {
+  const refresh = useCallback(async () => {
+    const sequence = ++requestSequence.current;
     setLoading(true);
     setError('');
     try {
       const p = await postService.getPosts(selectedCat);
-      setPosts(p);
+      if (sequence === requestSequence.current) setPosts(p);
     } catch (requestError) {
-      setError(apiErrorMessage(requestError, 'Posts could not be loaded.'));
+      if (sequence === requestSequence.current) setError(apiErrorMessage(requestError, 'Posts could not be loaded.'));
     } finally {
-      setLoading(false);
+      if (sequence === requestSequence.current) setLoading(false);
     }
-  };
+  }, [selectedCat]);
 
   useEffect(() => {
-    async function loadData() {
-      setCategories(['All', ...(await postService.getCategories())]);
-      await refresh();
-    }
-    loadData();
-  }, [selectedCat]);
+    postService.getCategories().then((items) => setCategories(['All', ...items])).catch((requestError) => {
+      setError(apiErrorMessage(requestError, 'Post categories could not be loaded.'));
+    });
+  }, []);
+
+  useEffect(() => {
+    refresh();
+    return () => { requestSequence.current += 1; };
+  }, [refresh]);
 
   const handleCreatePost = async (postData) => {
     await postService.createPost(postData);

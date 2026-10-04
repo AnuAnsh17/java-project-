@@ -3,7 +3,7 @@ import api from '../../services/api';
 const mapComplaint = (item) => ({
   ...item,
   subject: item.title,
-  dateSubmitted: 'Submitted to Campus Connect',
+  status: ({ SUBMITTED: 'Submitted', UNDER_REVIEW: 'Under review' })[item.status] || item.status,
   identityMode: item.anonymous ? 'Anonymous' : 'Identified'
 });
 

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, LogOut, Briefcase, User } from 'lucide-react';
+import { Menu, X, LogOut, Briefcase, User } from 'lucide-react';
 import { CollegeLogo, CampusConnectLogo } from '../../components/common/PlaceholderLogo';
 import { useFaculty } from '../hooks/useFaculty';
 import { useAuth } from '../../auth/hooks/useAuth';
 
-export const FacultyNavbar = ({ onToggleSidebar }) => {
+export const FacultyNavbar = ({ onToggleSidebar, mobileOpen }) => {
   const { facultyProfile } = useFaculty();
   const { logout } = useAuth();
   const navigate = useNavigate();
@@ -14,8 +14,8 @@ export const FacultyNavbar = ({ onToggleSidebar }) => {
   return (
     <header className="faculty-top-navbar">
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <button className="btn d-lg-none" onClick={onToggleSidebar} style={{ color: 'white', padding: '0' }}>
-          <Menu size={22} />
+        <button type="button" className="btn d-lg-none" onClick={onToggleSidebar} aria-label={mobileOpen ? 'Close menu' : 'Open menu'} aria-expanded={mobileOpen} style={{ color: 'var(--text-primary)', padding: '0' }}>
+          {mobileOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
         <Link to="/faculty" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
           <CollegeLogo className="brand-logo-img" style={{ height: '34px' }} />
@@ -28,31 +28,31 @@ export const FacultyNavbar = ({ onToggleSidebar }) => {
       </div>
 
       <div style={{ position: 'relative' }}>
-        <div
+        <button type="button"
           className="student-user-pill"
           style={{ background: '#0284c7', borderColor: '#38bdf8', color: 'white' }}
           onClick={() => setShowProfileMenu(!showProfileMenu)}
+          aria-expanded={showProfileMenu}
+          aria-haspopup="menu"
         >
           <Briefcase size={18} color="white" />
           <span style={{ fontWeight: '600', fontSize: '0.88rem' }}>{facultyProfile?.name || "Faculty Member"}</span>
-        </div>
+        </button>
 
         {showProfileMenu && (
-          <div className="notif-dropdown" style={{ top: '50px', width: '200px', background: '#0f172a', borderColor: '#334155' }}>
-            <div
-              className="notif-item"
+          <div className="notif-dropdown" role="menu" style={{ top: '50px', width: '200px' }}>
+            <button type="button" className="notif-item" role="menuitem"
               onClick={() => { setShowProfileMenu(false); navigate('/faculty/profile'); }}
-              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.88rem', color: 'white' }}
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.88rem', color: 'var(--text-primary)' }}
             >
               <User size={16} /> Faculty Profile
-            </div>
-            <div
-              className="notif-item"
+            </button>
+            <button type="button" className="notif-item" role="menuitem"
               onClick={() => { setShowProfileMenu(false); logout(); navigate('/login', { replace: true }); }}
               style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.88rem', color: '#f87171' }}
             >
               <LogOut size={16} /> Logout Session
-            </div>
+            </button>
           </div>
         )}
       </div>
